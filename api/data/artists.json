@@ -1,0 +1,273 @@
+[{
+	"_id": {
+		"$oid": "636822e8881bd2880006e283"
+	},
+	"artistName": "Freddie Mercury",
+	"bornYear": 1946,
+	"diedYear": 1991,
+	"nation": "British",
+	"gender": "male",
+	"bands": [
+		"Queens"
+	],
+	"firstSong": "Keep Yourself Alive",
+	"songs": [
+		{
+			"title": "We Are The Champions2",
+			"rank": 4,
+			"year": 1978,
+			"album": "Queens",
+			"_id": {
+				"$oid": "636823d7f0faff8f40b96a97"
+			}
+		},
+		{
+			"title": "Another One Bites The Dust",
+			"rank": 1,
+			"year": 1980,
+			"album": "The Game",
+			"_id": {
+				"$oid": "636827254e4489e6565dcc09"
+			}
+		},
+		{
+			"title": "Crazy Little Thing Called Love",
+			"rank": 1,
+			"year": 1980,
+			"album": "Crazy Little Thing Called Love",
+			"_id": {
+				"$oid": "63682e67a53f7651d40c962e"
+			}
+		},
+		{
+			"title": "Bahomian Rhapsody",
+			"rank": 2,
+			"year": 1992,
+			"album": "A Night at the Opera",
+			"_id": {
+				"$oid": "63683028bcbc838e111b116e"
+			}
+		}
+	],
+	"__v": 0
+},
+{
+	"_id": {
+		"$oid": "636832febcbc838e111b1184"
+	},
+	"artistName": "Billie Joe Armstrong",
+	"bornYear": 1972,
+	"nation": "America",
+	"gender": "male",
+	"bands": [
+		"Green Day",
+		"Pinhead Gunpowder",
+		"he Network",
+		"Foxboro Hot tubs",
+		"The Longshot"
+	],
+	"firstSong": "Look for Love",
+	"songs": [
+		{
+			"title": "Boulevard of Broken Dreams",
+			"rank": 2,
+			"year": 2005,
+			"album": "American Idiot",
+			"_id": {
+				"$oid": "636833e3bcbc838e111b1199"
+			}
+		},
+		{
+			"title": "Wake Me up When September Ends",
+			"rank": 6,
+			"year": 2005,
+			"album": "American Idiot",
+			"_id": {
+				"$oid": "63683436bcbc838e111b11a3"
+			}
+		}
+	],
+	"__v": 0
+},
+{
+	"_id": {
+		"$oid": "63683513bcbc838e111b11a5"
+	},
+	"artistName": "Chris Martin",
+	"bornYear": 1977,
+	"nation": "England",
+	"gender": "Male",
+	"bands": [
+		"Coldplay"
+	],
+	"firstSong": "Ode to Deodrant",
+	"songs": [
+		{
+			"title": "Speed of Sound",
+			"rank": 8,
+			"year": 2005,
+			"album": "X&Y",
+			"_id": {
+				"$oid": "636836e8bcbc838e111b11a8"
+			}
+		},
+		{
+			"title": "Viva La Vida",
+			"rank": 1,
+			"year": 2008,
+			"album": "Viva La Vida ",
+			"_id": {
+				"$oid": "63683738bcbc838e111b11ac"
+			}
+		},
+		{
+			"title": "A Sky Full Of Stars",
+			"rank": 10,
+			"year": 2014,
+			"album": "Ghost Stories",
+			"_id": {
+				"$oid": "63683771bcbc838e111b11b1"
+			}
+		},
+		{
+			"title": "Something Just Like This",
+			"rank": 3,
+			"year": 2017,
+			"album": "Memories...Do Not Open",
+			"_id": {
+				"$oid": "636837a4bcbc838e111b11b7"
+			}
+		}
+	],
+	"__v": 0
+},
+{
+	"_id": {
+		"$oid": "63683b5dbcbc838e111b11cf"
+	},
+	"artistName": "Axl Rose",
+	"bornYear": 1962,
+	"nation": "America",
+	"gender": "Male",
+	"bands": [
+		"GUNS N' Roses"
+	],
+	"firstSong": "Sweet Child o' Mine",
+	"songs": [
+		{
+			"title": "Sweet Child O' Mine",
+			"rank": 1,
+			"year": 1988,
+			"album": "Appetite for Destruction",
+			"_id": {
+				"$oid": "63683b9abcbc838e111b11d2"
+			}
+		},
+		{
+			"title": "Welcome To The Jungle",
+			"rank": 7,
+			"year": 1988,
+			"album": "Appetite for Destruction",
+			"_id": {
+				"$oid": "63683bccbcbc838e111b11d6"
+			}
+		},
+		{
+			"title": "Patience",
+			"rank": 4,
+			"year": 1988,
+			"album": "G N' R Lies",
+			"_id": {
+				"$oid": "63683bf8bcbc838e111b11db"
+			}
+		},
+		{
+			"title": "Paradise City",
+			"rank": 5,
+			"year": 1989,
+			"album": "Appetite for Destruction",
+			"_id": {
+				"$oid": "63683c26bcbc838e111b11e1"
+			}
+		},
+		{
+			"title": "November Rain",
+			"rank": 3,
+			"year": 1992,
+			"album": "Use Your Illusion I",
+			"_id": {
+				"$oid": "63683c5abcbc838e111b11e8"
+			}
+		}
+	],
+	"__v": 0
+},
+{
+	"_id": {
+		"$oid": "63683d20bcbc838e111b11f5"
+	},
+	"artistName": "Kurt Cobain",
+	"bornYear": 1967,
+	"nation": "America",
+	"gender": "Male",
+	"bands": [
+		"Nirvana"
+	],
+	"firstSong": "Smells Like Teen Spirit",
+	"songs": [
+		{
+			"title": "Smells Like Teen Spirit",
+			"rank": 6,
+			"year": 1992,
+			"album": "Nevermind",
+			"_id": {
+				"$oid": "63683d5fbcbc838e111b11f8"
+			}
+		}
+	],
+	"__v": 0
+},
+{
+	"_id": {
+		"$oid": "63683e51bcbc838e111b11fa"
+	},
+	"artistName": "Joan Jett",
+	"bornYear": 1958,
+	"nation": "America",
+	"gender": "Female",
+	"bands": [
+		"Joan Jett & the Blackhearts"
+	],
+	"firstSong": "I Love Rock 'n Roll",
+	"songs": [
+		{
+			"title": "I Love Rock 'N Roll",
+			"rank": 1,
+			"year": 1982,
+			"album": "I Love Rock 'N Roll",
+			"_id": {
+				"$oid": "63683e8abcbc838e111b11fd"
+			}
+		},
+		{
+			"title": "Crimson And Clover",
+			"rank": 7,
+			"year": 1982,
+			"album": "Crimson And Clover",
+			"_id": {
+				"$oid": "63683ec9bcbc838e111b1201"
+			}
+		},
+		{
+			"title": "I hate Myself For Loving You",
+			"rank": 8,
+			"year": 1988,
+			"album": "Up Your Alley",
+			"_id": {
+				"$oid": "63683ef8bcbc838e111b1206"
+			}
+		}
+	],
+	"__v": 0
+}]
+
