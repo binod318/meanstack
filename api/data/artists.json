@@ -5,8 +5,8 @@
 	"artistName": "Freddie Mercury",
 	"bornYear": 1946,
 	"diedYear": 1991,
-	"nation": "British",
-	"gender": "male",
+	"nation": "England",
+	"gender": "M",
 	"bands": [
 		"Queens"
 	],
@@ -58,7 +58,7 @@
 	"artistName": "Billie Joe Armstrong",
 	"bornYear": 1972,
 	"nation": "America",
-	"gender": "male",
+	"gender": "M",
 	"bands": [
 		"Green Day",
 		"Pinhead Gunpowder",
@@ -96,7 +96,7 @@
 	"artistName": "Chris Martin",
 	"bornYear": 1977,
 	"nation": "England",
-	"gender": "Male",
+	"gender": "M",
 	"bands": [
 		"Coldplay"
 	],
@@ -148,7 +148,7 @@
 	"artistName": "Axl Rose",
 	"bornYear": 1962,
 	"nation": "America",
-	"gender": "Male",
+	"gender": "M",
 	"bands": [
 		"GUNS N' Roses"
 	],
@@ -175,7 +175,7 @@
 		{
 			"title": "Patience",
 			"rank": 4,
-			"year": 1988,
+			"year": 1989,
 			"album": "G N' R Lies",
 			"_id": {
 				"$oid": "63683bf8bcbc838e111b11db"
@@ -209,7 +209,7 @@
 	"artistName": "Kurt Cobain",
 	"bornYear": 1967,
 	"nation": "America",
-	"gender": "Male",
+	"gender": "M",
 	"bands": [
 		"Nirvana"
 	],
@@ -234,7 +234,7 @@
 	"artistName": "Joan Jett",
 	"bornYear": 1958,
 	"nation": "America",
-	"gender": "Female",
+	"gender": "F",
 	"bands": [
 		"Joan Jett & the Blackhearts"
 	],
@@ -265,6 +265,68 @@
 			"album": "Up Your Alley",
 			"_id": {
 				"$oid": "63683ef8bcbc838e111b1206"
+			}
+		}
+	],
+	"__v": 0
+},
+{
+	"_id": {
+		"$oid": "636874a4c1d6bee77084ea27"
+	},
+	"artistName": "Bryan Adams",
+	"bornYear": 1959,
+	"nation": "Canada",
+	"gender": "M",
+	"bands": [
+		"Sweeney Todd",
+		"Glass Tiger"
+	],
+	"firstSong": "Let Me Take You Dancing",
+	"songs": [
+		{
+			"title": "(Everything I Do) I Do It For You",
+			"rank": 1,
+			"year": 1991,
+			"album": "Robin Hood: Prince of Thieves",
+			"_id": {
+				"$oid": "63687567c1d6bee77084ea2a"
+			}
+		},
+		{
+			"title": "Can't Stop This Thing We Started",
+			"rank": 2,
+			"year": 1991,
+			"album": "Waking Up the Neighbours",
+			"_id": {
+				"$oid": "63687597c1d6bee77084ea2e"
+			}
+		},
+		{
+			"title": "Please Forgive Me",
+			"rank": 7,
+			"year": 1993,
+			"album": "Waking Up the Neighbours",
+			"_id": {
+				"$oid": "636875aec1d6bee77084ea33"
+			}
+		},
+		{
+			"title": "Have You Ever Really Loved A Woman",
+			"rank": 1,
+			"year": 1995,
+			"album": "18 til I Die",
+			"_id": {
+				"$oid": "63687665c1d6bee77084ea39"
+			}
+		},
+		{
+			"title": "All For Love",
+			"rank": 1,
+			"year": 1994,
+			"album": "Best Ballads",
+			"_id": {
+				"$oid": "636876b4c1d6bee77084ea40"
 			}
 		}
 	],
