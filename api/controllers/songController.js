@@ -15,7 +15,7 @@ const _addSong = function(req, res, artist){
     artist.save(function(err, updatedArtist){
         const response = {
             status: process.env.OK_STATUS_CODE,
-            message: updatedArtist
+            message: ""
         }
 
         //check error response
@@ -37,6 +37,7 @@ const _updateSong = function(req, res, artist){
 
     let selectedSong = artist.songs.id(songId);
 
+    //check is song document exist for given id
     if(selectedSong === null){
         res.status(parseInt(process.env.SERVER_ERROR_STATUS_CODE, process.env.NUMBER_BASE)).json(process.env.INVALID_SONG_MESSAGE + songId);
         return;
@@ -51,7 +52,7 @@ const _updateSong = function(req, res, artist){
     artist.save(function(err, updatedArtist){
         const response = {
             status: process.env.OK_STATUS_CODE,
-            message: updatedArtist
+            message: ""
         }
 
         //check error response
@@ -70,8 +71,10 @@ const _updateSong = function(req, res, artist){
 const _partialUpdateSong = function(req, res, artist){
     const songId = req.params.songId;
 
+    //find song for given id
     let selectedSong = artist.songs.id(songId);
 
+    //check if song exists for given id
     if(selectedSong === null){
         res.status(parseInt(process.env.SERVER_ERROR_STATUS_CODE, process.env.NUMBER_BASE)).json(process.env.INVALID_SONG_MESSAGE + songId);
         return;
@@ -86,7 +89,7 @@ const _partialUpdateSong = function(req, res, artist){
     artist.save(function(err, updatedArtist){
         const response = {
             status: process.env.OK_STATUS_CODE,
-            message: updatedArtist
+            message: ""
         }
 
         //check error response
@@ -111,7 +114,7 @@ const _deleteSong = function(req, res, artist){
     artist.save(function(err, updatedArtist){
         const response = {
             status: process.env.OK_STATUS_CODE,
-            message: updatedArtist
+            message: ""
         }
 
         //check error response
@@ -155,7 +158,7 @@ const getAll = function(req, res){
         return;
     }
 
-    //check parameter type
+    //check if the id is valid document object id
     const validArtistId = mongoose.isValidObjectId(artistId);
     if(!validArtistId){
         res.status(parseInt(process.env.FILE_NOT_FOUND_STATUS_CODE)).json({message: process.env.INVALID_DOCUMENT_OBJECT_ID_MESSAGE});
@@ -172,7 +175,7 @@ const getAll = function(req, res){
         if(err){
             response.status = process.env.SERVER_ERROR_STATUS_CODE;
             response.message = err;
-        } else if(artist === null){
+        } else if(artist === null){ //check if artist exists with given id
             response.status = process.env.FILE_NOT_FOUND_STATUS_CODE;
             response.message = process.env.INVALID_ARTIST_MESSAGE + artistId;  
         } else {
@@ -193,7 +196,7 @@ const getOne = function(req, res){
     const artistId = req.params.artistId;
     const songId = req.params.songId;
 
-    //check parameter type
+    //check if the id is valid document id
     const validArtistId = mongoose.isValidObjectId(artistId);
     if(!validArtistId){
         res.status(parseInt(process.env.FILE_NOT_FOUND_STATUS_CODE)).json({message: process.env.INVALID_DOCUMENT_OBJECT_ID_MESSAGE + artistId});
@@ -238,7 +241,7 @@ const create = function(req, res){
     console.log("Add song request received");
     const artistId = req.params.artistId;
 
-    //check parameter type
+    //check if the id passed is valid document id
     const validArtistId = mongoose.isValidObjectId(artistId);
     if(!validArtistId){
         res.status(parseInt(process.env.FILE_NOT_FOUND_STATUS_CODE)).json({message: process.env.INVALID_DOCUMENT_OBJECT_ID_MESSAGE + artistId});
@@ -255,7 +258,7 @@ const create = function(req, res){
         if(err){
             response.status = process.env.SERVER_ERROR_STATUS_CODE;
             response.message = err;
-        } else if(artist === null){
+        } else if(artist === null){ //check object response
             response.status = process.env.FILE_NOT_FOUND_STATUS_CODE;
             response.message = process.env.INVALID_ARTIST_MESSAGE + artistId;
         }
@@ -273,13 +276,13 @@ const update = function(req, res){
     const artistId = req.params.artistId;
     const songId = req.params.songId;
 
-    //check parameter type
+    //check if the id is valid document object id
     const validArtistId = mongoose.isValidObjectId(artistId);
     if(!validArtistId){
         res.status(parseInt(process.env.FILE_NOT_FOUND_STATUS_CODE)).json({message: process.env.INVALID_DOCUMENT_OBJECT_ID_MESSAGE + artistId});
         return;
     }
-
+    //check if the id is valid document object id
     const validSongId = mongoose.isValidObjectId(songId);
     if(!validSongId){
         res.status(parseInt(process.env.FILE_NOT_FOUND_STATUS_CODE)).json({message: process.env.INVALID_DOCUMENT_OBJECT_ID_MESSAGE + songId});
@@ -296,7 +299,7 @@ const update = function(req, res){
         if(err){
             response.status = process.env.SERVER_ERROR_STATUS_CODE;
             response.message = err;
-        } else if(artist === null){
+        } else if(artist === null){ //check object response
             response.status = process.env.FILE_NOT_FOUND_STATUS_CODE;
             response.message = process.env.INVALID_ARTIST_MESSAGE + artistId;
         }
@@ -315,13 +318,13 @@ const partialUpdate = function(req, res){
     const artistId = req.params.artistId;
     const songId = req.params.songId;
 
-    //check parameter type
+    //check if the id is valid document object id
     const validArtistId = mongoose.isValidObjectId(artistId);
     if(!validArtistId){
         res.status(parseInt(process.env.FILE_NOT_FOUND_STATUS_CODE)).json({message: process.env.INVALID_DOCUMENT_OBJECT_ID_MESSAGE + artistId});
         return;
     }
-
+    //check if the id is valid document object id
     const validSongId = mongoose.isValidObjectId(songId);
     if(!validSongId){
         res.status(parseInt(process.env.FILE_NOT_FOUND_STATUS_CODE)).json({message: process.env.INVALID_DOCUMENT_OBJECT_ID_MESSAGE + songId});
@@ -338,7 +341,7 @@ const partialUpdate = function(req, res){
         if(err){
             response.status = process.env.SERVER_ERROR_STATUS_CODE;
             response.message = err;
-        } else if(artist === null){
+        } else if(artist === null){ //check object response
             response.status = process.env.FILE_NOT_FOUND_STATUS_CODE;
             response.message = process.env.INVALID_ARTIST_MESSAGE + artistId;
         }
@@ -381,11 +384,12 @@ const remove = function(req, res){
         if(err){
             response.status = process.env.SERVER_ERROR_STATUS_CODE;
             response.message = err;
-        } else if(artist === null){
+        } else if(artist === null){ //check object response
             response.status = process.env.FILE_NOT_FOUND_STATUS_CODE;
             response.message = process.env.INVALID_ARTIST_MESSAGE + artistId;
         }
         
+        //delete sub document only if main document exists
         if(artist){
             _deleteSong(req, res, artist);
         } else {

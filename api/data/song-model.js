@@ -14,4 +14,3 @@ const songSchema = new mongoose.Schema({
 });
 
 module.exports = songSchema;
-//mongoose.model(process.env.SONG_MODEL, songSchema, process.env.SONGS_COLLECTION);

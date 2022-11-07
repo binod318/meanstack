@@ -22,10 +22,7 @@ process.once("SIGUSR2", function(){
 })
 
 process.on("SIGHUP", function(){
-    //console.log("SIGHUP received");
     mongoose.connection.close(function(){
-        //console.log("Mongoose close success.");
-        //process.exit(0);
         process.kill(process.pid, "SIGUSR2");
     });
 });

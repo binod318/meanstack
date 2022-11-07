@@ -127,7 +127,7 @@ const updateOne = function(req, res) {
             return;
         } 
 
-        //check object response
+        //check if artist exists with given id
         if(artist === null){ 
             res.status(parseInt(process.env.FILE_NOT_FOUND_STATUS_CODE)).json({message: process.env.INVALID_IDENTIFIER_MESSAGE});
             return;
@@ -180,12 +180,14 @@ const partialUpdateOne = function(req, res) {
             return;
         } 
 
+        //check if artist exists or not with given id
         if(artist === null){ 
             res.status(parseInt(process.env.FILE_NOT_FOUND_STATUS_CODE)).json({message: process.env.INVALID_IDENTIFIER_MESSAGE});
             return;
         } 
 
         //update found object with request parameters
+        //update existing db object only if new value is coming from request 
         if (req.body.artistName) 
             artist.artistName   = req.body.artistName     
         if (req.body.bornYear) 
