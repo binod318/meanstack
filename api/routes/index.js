@@ -10,8 +10,8 @@ router.route("/artists")
 
 router.route("/artists/:artistId")
    .get(artistController.getOne)
-   .put(artistController.updateOne)
-   .patch(artistController.partialUpdateOne)
+   .put(artistController.fullUpdate)
+   .patch(artistController.partialUpdate)
    .delete(artistController.deleteOne);
 
 //routes for sub document - song

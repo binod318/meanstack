@@ -14,6 +14,23 @@ mongoose.connection.on("error", function(){
     console.log(process.env.MONGOOSE_ERROR_MESSAGE);
 });
 
+
+process.on("SIGINT", function(){
+    console.log("Interrupt received");
+    mongoose.connection.close(function(){
+        console.log("Mongoose close success.");
+        process.exit(0);
+    });
+});
+
+process.on("SIGTERM", function(){
+    console.log("Terminate received");
+    mongoose.connection.close(function(){
+        console.log("Mongoose close success.");
+        process.exit(0);
+    });
+});
+
 process.once("SIGUSR2", function(){
     mongoose.connection.close(function(){
         console.log(process.env.MONGOOSE_SIGUSR2_MESSAGE);
