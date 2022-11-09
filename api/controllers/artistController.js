@@ -2,8 +2,6 @@ const mongoose = require('mongoose');
 
 const Artist = mongoose.model(process.env.ARTIST_MODEL);
 
-//private methods
-
 const _sendResponse = function(res, response){
     res.status(parseInt(response.status, process.env.NUMBER_BASE)).json(response.message);
 }
@@ -14,7 +12,7 @@ const _validateObjectId = function(id){
     if(!validObjectId){
         const response = {
             status: process.env.FILE_NOT_FOUND_STATUS_CODE,
-            message: process.env.INVALID_DOCUMENT_OBJECT_ID_MESSAGE
+            message: process.env.INVALID_DOCUMENT_OBJECT_ID_MESSAGE + id
         };
         return response;
     }

@@ -17,12 +17,12 @@ router.route("/artists/:artistId")
 //routes for sub document - song
 router.route("/artists/:artistId/songs")
    .get(songController.getAll)
-   .post(songController.create);
+   .post(songController.addOne);
 
 router.route("/artists/:artistId/songs/:songId")
    .get(songController.getOne)
-   .put(songController.update)
+   .put(songController.fullUpdate)
    .patch(songController.partialUpdate)
-   .delete(songController.remove);
+   .delete(songController.deleteOne);
 
 module.exports = router;

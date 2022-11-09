@@ -2,6 +2,60 @@ const mongoose = require('mongoose');
 
 const Artist = mongoose.model(process.env.ARTIST_MODEL);
 
+const _sendResponse = function(res, response){
+    res.status(parseInt(response.status, process.env.NUMBER_BASE)).json(response.message);
+}
+
+//check if id provided is valid document objectid type
+const _validateObjectId = function(id){
+    const validObjectId = mongoose.isValidObjectId(id);
+    if(!validObjectId){
+        const response = {
+            status: process.env.FILE_NOT_FOUND_STATUS_CODE,
+            message: process.env.INVALID_DOCUMENT_OBJECT_ID_MESSAGE + id
+        };
+        return response;
+    }
+}
+
+const _checkError = function(error){
+    //check error response
+    if(error){ 
+        const response = {
+            status: process.env.SERVER_ERROR_STATUS_CODE,
+            message: error
+        };
+        return response;
+    }  
+}
+
+const _checkDbResponse = function(dbResponse){
+    //check if artist exists with given id
+    if(dbResponse === null){ 
+        const response = {
+            status: process.env.FILE_NOT_FOUND_STATUS_CODE,
+            message: process.env.INVALID_IDENTIFIER_MESSAGE
+        };
+        return response;
+    } 
+}
+
+const _updateAndSendResponse = function(res, artist){
+    artist.save(function(err, updatedArtist){
+        //check error response
+        let response = _checkError(err);
+        if(!response){
+            response = {
+                status: process.env.UPDATE_SUCCESS_STATUS_CODE,
+                message: updatedArtist
+            };
+        }
+
+        //single termination point
+        _sendResponse(res, response);
+    });
+}
+
 const _addSong = function(req, res, artist){
     const song = {
         title,
@@ -11,123 +65,76 @@ const _addSong = function(req, res, artist){
     } = req.body;
 
     artist.songs.push(song);
-
-    artist.save(function(err, updatedArtist){
-        const response = {
-            status: process.env.OK_STATUS_CODE,
-            message: ""
-        }
-
-        //check error response
-        if(err){
-            response.status = process.env.SERVER_ERROR_STATUS_CODE;
-            response.message = err;
-        } else {
-            response.status = process.env.CREATE_SUCCESS_STATUS_CODE;
-            response.message = updatedArtist.songs[updatedArtist.songs.length - 1];  
-        }
-
-        //single termination point
-        res.status(parseInt(response.status, process.env.NUMBER_BASE)).json({message: response.message});
-    });
+    _updateAndSendResponse(res, artist);
 }
 
-const _updateSong = function(req, res, artist){
+const _fullUpdateSong = function(req, song){
+    song.title = req.body.title;
+    song.rank = req.body.rank;
+    song.year = req.body.year;
+    song.album = req.body.album;
+}
+
+const _partialUpdateSong = function(req, song){
+    if(req.body.title) song.title = req.body.title;
+    if(req.body.rank) song.rank = req.body.rank;
+    if(req.body.year) song.year = req.body.year;
+    if(req.body.album) song.album = req.body.album;
+}
+
+const _update = function(req, res, update){
+    const artistId = req.params.artistId;
     const songId = req.params.songId;
 
-    let selectedSong = artist.songs.id(songId);
-
-    //check is song document exist for given id
-    if(selectedSong === null){
-        res.status(parseInt(process.env.SERVER_ERROR_STATUS_CODE, process.env.NUMBER_BASE)).json(process.env.INVALID_SONG_MESSAGE + songId);
+    //validate if provided artistId is valid document id
+    let response = _validateObjectId(artistId);
+    if(response){
+        _sendResponse(res, response);
         return;
     }
 
-    //update object
-    selectedSong.title = req.body.title;
-    selectedSong.rank = req.body.rank;
-    selectedSong.year = req.body.year;
-    selectedSong.album = req.body.album;
-
-    artist.save(function(err, updatedArtist){
-        const response = {
-            status: process.env.OK_STATUS_CODE,
-            message: ""
-        }
-
-        //check error response
-        if(err){
-            response.status = process.env.SERVER_ERROR_STATUS_CODE;
-            response.message = err;
-        } else {
-            response.message = updatedArtist.songs.id(songId);  
-        }
-
-        //single termination point
-        res.status(parseInt(response.status, process.env.NUMBER_BASE)).json(response.message);
-    });
-}
-
-const _partialUpdateSong = function(req, res, artist){
-    const songId = req.params.songId;
-
-    //find song for given id
-    let selectedSong = artist.songs.id(songId);
-
-    //check if song exists for given id
-    if(selectedSong === null){
-        res.status(parseInt(process.env.SERVER_ERROR_STATUS_CODE, process.env.NUMBER_BASE)).json(process.env.INVALID_SONG_MESSAGE + songId);
+    //validate if provided songId is valid document id
+    response = _validateObjectId(songId);
+    if(response){
+        _sendResponse(res, response);
         return;
     }
 
-    //update object
-    if(req.body.title) selectedSong.title = req.body.title;
-    if(req.body.rank) selectedSong.rank = req.body.rank;
-    if(req.body.year) selectedSong.year = req.body.year;
-    if(req.body.album) selectedSong.album = req.body.album;
+    Artist.findById(artistId).select("songs").exec(function(err, artist){
+        
+        let response = _checkError(err);
+        if(!response){
+            response = _checkDbResponse(artist);
+            if(response){
+                _sendResponse(res, response);
+            } else {
+                //find song for given id
+                let selectedSong = artist.songs.id(songId);
 
-    artist.save(function(err, updatedArtist){
-        const response = {
-            status: process.env.OK_STATUS_CODE,
-            message: ""
+                //check if song exists for given id
+                if(selectedSong === null){
+                    response = {
+                        status: process.env.SERVER_ERROR_STATUS_CODE,
+                        message: process.env.INVALID_SONG_MESSAGE + songId
+                    }
+                    _sendResponse(res, response);
+                } else {
+                    update(req, selectedSong);
+                    _updateAndSendResponse(res, artist);
+                }
+            }
         }
-
-        //check error response
-        if(err){
-            response.status = process.env.SERVER_ERROR_STATUS_CODE;
-            response.message = err;
-        } else {
-            response.message = updatedArtist.songs.id(songId);  
-        }
-
-        //single termination point
-        res.status(parseInt(response.status, process.env.NUMBER_BASE)).json(response.message);
     });
 }
 
 const _deleteSong = function(req, res, artist){
     const songId = req.params.songId;
-
     //remove document by id
-    artist.songs.id(songId).remove();
+    const song =artist.songs.id(songId)
+    if(song)
+        song.remove();
 
-    artist.save(function(err, updatedArtist){
-        const response = {
-            status: process.env.OK_STATUS_CODE,
-            message: ""
-        }
-
-        //check error response
-        if(err){
-            response.status = process.env.SERVER_ERROR_STATUS_CODE;
-            response.message = err;
-        } else {
-            response.message = updatedArtist.songs;  
-        }
-
-        //single termination point
-        res.status(parseInt(response.status, process.env.NUMBER_BASE)).json(response.message);
-    });
+    _updateAndSendResponse(res, artist);
 }
 
 const getAll = function(req, res){
@@ -158,37 +165,33 @@ const getAll = function(req, res){
         return;
     }
 
-    //check if the id is valid document object id
-    const validArtistId = mongoose.isValidObjectId(artistId);
-    if(!validArtistId){
-        res.status(parseInt(process.env.FILE_NOT_FOUND_STATUS_CODE)).json({message: process.env.INVALID_DOCUMENT_OBJECT_ID_MESSAGE});
+    //validate if provided artistId is valid document id
+    const response = _validateObjectId(artistId);
+    if(response){
+        _sendResponse(res, response);
         return;
     }
 
     Artist.findById(artistId).select("songs").exec(function(err, artist) {
-        const response = {
-            status: process.env.OK_STATUS_CODE,
-            message: []
-        }
-
         //check error response
-        if(err){
-            response.status = process.env.SERVER_ERROR_STATUS_CODE;
-            response.message = err;
-        } else if(artist === null){ //check if artist exists with given id
-            response.status = process.env.FILE_NOT_FOUND_STATUS_CODE;
-            response.message = process.env.INVALID_ARTIST_MESSAGE + artistId;  
-        } else {
-            //custom offset and limit implementation
-            const filteredData = artist.songs.filter((val, index, arr) => {
-                if(index >= offset && index - offset < count ) 
-                    return true;
-            });
-            response.message = filteredData;  
+        let response = _checkError(err);
+        if(!response){
+            response = _checkDbResponse(artist);
+            if(!response){
+                //custom offset and limit implementation
+                const filteredData = artist.songs.filter((val, index, arr) => {
+                    if(index >= offset && index - offset < count ) 
+                        return true;
+                });
+                response = {
+                    status: process.env.OK_STATUS_CODE,
+                    message: filteredData
+                }
+            }
         }
 
         //single termination point
-        res.status(parseInt(response.status, process.env.NUMBER_BASE)).json(response.message);
+        _sendResponse(res, response);
     });
 }
 
@@ -196,204 +199,110 @@ const getOne = function(req, res){
     const artistId = req.params.artistId;
     const songId = req.params.songId;
 
-    //check if the id is valid document id
-    const validArtistId = mongoose.isValidObjectId(artistId);
-    if(!validArtistId){
-        res.status(parseInt(process.env.FILE_NOT_FOUND_STATUS_CODE)).json({message: process.env.INVALID_DOCUMENT_OBJECT_ID_MESSAGE + artistId});
+    //validate if provided artistId is valid document id
+    let response = _validateObjectId(artistId);
+    if(response){
+        _sendResponse(res, response);
         return;
     }
 
-    const validSongId = mongoose.isValidObjectId(songId);
-    if(!validSongId){
-        res.status(parseInt(process.env.FILE_NOT_FOUND_STATUS_CODE)).json({message: process.env.INVALID_DOCUMENT_OBJECT_ID_MESSAGE + songId});
+    //validate if provided songId is valid document id
+    response = _validateObjectId(songId);
+    if(response){
+        _sendResponse(res, response);
         return;
     }
 
     Artist.findById(artistId).select("songs").exec(function(err, artist) {
-        const response = {
-            status: process.env.OK_STATUS_CODE,
-            message: []
-        }
 
         //check error response
-        if(err){
-            response.status = process.env.SERVER_ERROR_STATUS_CODE;
-            response.message = err;
-        } else if(artist === null){
-            response.status = process.env.FILE_NOT_FOUND_STATUS_CODE;
-            response.message = process.env.INVALID_ARTIST_MESSAGE + artistId;  
-        } else {
-            const selectedSong = artist.songs.id(songId); 
-            if(selectedSong)
-                response.message = selectedSong; 
-            else {
-                response.status = process.env.FILE_NOT_FOUND_STATUS_CODE;
-                response.message = process.env.INVALID_SONG_MESSAGE + songId; 
+        let response = _checkError(err);
+        if(!response){
+            response = _checkDbResponse(artist);
+            if(!response){
+                const selectedSong = artist.songs.id(songId); 
+                if(selectedSong){
+                    response = {
+                        status: process.env.OK_STATUS_CODE,
+                        message: selectedSong
+                    }
+                } else {
+                    response = {
+                        status : process.env.FILE_NOT_FOUND_STATUS_CODE,
+                        message : process.env.INVALID_SONG_MESSAGE + songId
+                    }
+                }
             }
         }
 
         //single termination point
-        res.status(parseInt(response.status, process.env.NUMBER_BASE)).json(response.message);
+        _sendResponse(res, response);
     });
 }
 
-const create = function(req, res){
+const addOne = function(req, res){
     console.log("Add song request received");
     const artistId = req.params.artistId;
 
-    //check if the id passed is valid document id
-    const validArtistId = mongoose.isValidObjectId(artistId);
-    if(!validArtistId){
-        res.status(parseInt(process.env.FILE_NOT_FOUND_STATUS_CODE)).json({message: process.env.INVALID_DOCUMENT_OBJECT_ID_MESSAGE + artistId});
+    //validate if provided artistId is valid document id
+    const response = _validateObjectId(artistId);
+    if(response){
+        _sendResponse(res, response);
         return;
     }
 
     Artist.findById(artistId).select("songs").exec(function(err, artist){
-        const response = {
-            status: process.env.OK_STATUS_CODE,
-            message: artist
-        };
-
-        //check error response
-        if(err){
-            response.status = process.env.SERVER_ERROR_STATUS_CODE;
-            response.message = err;
-        } else if(artist === null){ //check object response
-            response.status = process.env.FILE_NOT_FOUND_STATUS_CODE;
-            response.message = process.env.INVALID_ARTIST_MESSAGE + artistId;
-        }
-        
-        if(artist){
-            _addSong(req, res, artist);
-        } else {
-            res.status(parseInt(response.status, process.env.NUMBER_BASE)).json({message: response.message});
+        let response = _checkError(err);
+        if(!response){
+            response = _checkDbResponse(artist);
+            if(response){
+                _sendResponse(res, response);
+            } else {
+                _addSong(req, res, artist);
+            }
         }
     });
 }
     
-const update = function(req, res){
-    console.log("Update song request received");
-    const artistId = req.params.artistId;
-    const songId = req.params.songId;
-
-    //check if the id is valid document object id
-    const validArtistId = mongoose.isValidObjectId(artistId);
-    if(!validArtistId){
-        res.status(parseInt(process.env.FILE_NOT_FOUND_STATUS_CODE)).json({message: process.env.INVALID_DOCUMENT_OBJECT_ID_MESSAGE + artistId});
-        return;
-    }
-    //check if the id is valid document object id
-    const validSongId = mongoose.isValidObjectId(songId);
-    if(!validSongId){
-        res.status(parseInt(process.env.FILE_NOT_FOUND_STATUS_CODE)).json({message: process.env.INVALID_DOCUMENT_OBJECT_ID_MESSAGE + songId});
-        return;
-    }
-
-    Artist.findById(artistId).select("songs").exec(function(err, artist){
-        const response = {
-            status: process.env.OK_STATUS_CODE,
-            message: artist
-        };
-
-        //check error response
-        if(err){
-            response.status = process.env.SERVER_ERROR_STATUS_CODE;
-            response.message = err;
-        } else if(artist === null){ //check object response
-            response.status = process.env.FILE_NOT_FOUND_STATUS_CODE;
-            response.message = process.env.INVALID_ARTIST_MESSAGE + artistId;
-        }
-        
-        //only update sub document if main document exists
-        if(artist){
-            _updateSong(req, res, artist);
-        } else {
-            res.status(parseInt(response.status, process.env.NUMBER_BASE)).json({message: response.message});
-        }
-    });
+const fullUpdate = function(req, res){
+    console.log("Full update song request received");
+    _update(req, res, _fullUpdateSong);
 }
 
 const partialUpdate = function(req, res){
     console.log("Partial update song request received");
-    const artistId = req.params.artistId;
-    const songId = req.params.songId;
-
-    //check if the id is valid document object id
-    const validArtistId = mongoose.isValidObjectId(artistId);
-    if(!validArtistId){
-        res.status(parseInt(process.env.FILE_NOT_FOUND_STATUS_CODE)).json({message: process.env.INVALID_DOCUMENT_OBJECT_ID_MESSAGE + artistId});
-        return;
-    }
-    //check if the id is valid document object id
-    const validSongId = mongoose.isValidObjectId(songId);
-    if(!validSongId){
-        res.status(parseInt(process.env.FILE_NOT_FOUND_STATUS_CODE)).json({message: process.env.INVALID_DOCUMENT_OBJECT_ID_MESSAGE + songId});
-        return;
-    }
-
-    Artist.findById(artistId).select("songs").exec(function(err, artist){
-        const response = {
-            status: process.env.OK_STATUS_CODE,
-            message: artist
-        };
-
-        //check error response
-        if(err){
-            response.status = process.env.SERVER_ERROR_STATUS_CODE;
-            response.message = err;
-        } else if(artist === null){ //check object response
-            response.status = process.env.FILE_NOT_FOUND_STATUS_CODE;
-            response.message = process.env.INVALID_ARTIST_MESSAGE + artistId;
-        }
-        
-        //only update sub document if main document exists
-        if(artist){
-            _partialUpdateSong(req, res, artist);
-        } else {
-            res.status(parseInt(response.status, process.env.NUMBER_BASE)).json({message: response.message});
-        }
-    });
+    _update(req, res, _partialUpdateSong);
 }
     
-const remove = function(req, res){
+const deleteOne = function(req, res){
     console.log("Delete song request received");
     const artistId = req.params.artistId;
     const songId = req.params.songId;
 
-    //check if the id is valid document object id
-    const validArtistId = mongoose.isValidObjectId(artistId);
-    if(!validArtistId){
-        res.status(parseInt(process.env.FILE_NOT_FOUND_STATUS_CODE)).json({message: process.env.INVALID_DOCUMENT_OBJECT_ID_MESSAGE + artistId});
+    //validate if provided artistId is valid document id
+    let response = _validateObjectId(artistId);
+    if(response){
+        _sendResponse(res, response);
         return;
     }
 
-    //check if the id is valid document object id
-    const validSongId = mongoose.isValidObjectId(songId);
-    if(!validSongId){
-        res.status(parseInt(process.env.FILE_NOT_FOUND_STATUS_CODE)).json({message: process.env.INVALID_DOCUMENT_OBJECT_ID_MESSAGE + songId});
+    //validate if provided songId is valid document id
+    response = _validateObjectId(songId);
+    if(response){
+        _sendResponse(res, response);
         return;
     }
 
     Artist.findById(artistId).select("songs").exec(function(err, artist){
-        const response = {
-            status: process.env.OK_STATUS_CODE,
-            message: artist
-        };
 
-        //check error response
-        if(err){
-            response.status = process.env.SERVER_ERROR_STATUS_CODE;
-            response.message = err;
-        } else if(artist === null){ //check object response
-            response.status = process.env.FILE_NOT_FOUND_STATUS_CODE;
-            response.message = process.env.INVALID_ARTIST_MESSAGE + artistId;
-        }
-        
-        //delete sub document only if main document exists
-        if(artist){
-            _deleteSong(req, res, artist);
-        } else {
-            res.status(parseInt(response.status, process.env.NUMBER_BASE)).json({message: response.message});
+        let response = _checkError(err);
+        if(!response){
+            response = _checkDbResponse(artist);
+            if(response){
+                _sendResponse(res, response);
+            } else {
+                _deleteSong(req, res, artist);
+            }
         }
     });
 }
@@ -401,8 +310,8 @@ const remove = function(req, res){
 module.exports = {
     getAll,
     getOne,
-    create,
-    update,
+    addOne,
+    fullUpdate,
     partialUpdate,
-    remove
+    deleteOne
 };
