@@ -53,8 +53,8 @@ export class RegisterComponent implements OnInit {
   onSubmit(){
     const user = new User(this.registrationForm.controls['name'].value, 
                           this.registrationForm.controls['userName'].value, 
-                          btoa(this.registrationForm.controls['password'].value),
-                          btoa(this.registrationForm.controls['confirmPassword'].value));
+                          this.registrationForm.controls['password'].value,
+                          this.registrationForm.controls['confirmPassword'].value);
 
     this._userService.createUser(user).subscribe(user => {
       if(user._id)

@@ -31,4 +31,11 @@ router.route("/users")
    .get(userController.getAll)
    .post(userController.addUser);
 
+router.route("/users/login")
+   .post(userController.login);
+
+router.route("/users/:userId")
+   .get(userController.getOne)
+   .delete(userController.deleteOne);
+
 module.exports = router;
