@@ -16,4 +16,9 @@ export class ArtistsDataService {
     const url = this._baseUrl + '/artists';
     return this._http.get<Artist[]>(url);
   }
+
+  public getArtist(artistId: string): Observable<Artist>{
+    const url = this._baseUrl + "/artists/" + artistId;
+    return this._http.get<Artist>(url);
+  }
 }

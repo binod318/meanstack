@@ -1,0 +1,7 @@
+nav {
+    margin: 10px;
+}
+
+nav > button {
+    margin: 2px;
+}

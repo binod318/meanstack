@@ -1,0 +1,12 @@
+<h1>{{artist.artistName}}</h1> <br/>
+
+BornYear: {{artist.bornYear}} <br/>
+Gender: {{artist.gender}} <br/>
+Nation: {{artist.nation}} <br/>
+First song: {{artist.firstSong}} <br/>
+
+<br/>
+Bands:
+<ul>
+    <li *ngFor="let band of artist.bands">{{band}}</li>
+</ul>

@@ -8,6 +8,10 @@ import { NavigationComponent } from './navigation/navigation.component';
 import { FooterComponent } from './footer/footer.component';
 import { HomeComponent } from './home/home.component';
 import { ArtistsComponent } from './artists/artists.component';
+import { RegisterComponent } from './register/register.component';
+import { ErrorPageComponent } from './error-page/error-page.component';
+import { ArtistComponent } from './artist/artist.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -15,12 +19,16 @@ import { ArtistsComponent } from './artists/artists.component';
     NavigationComponent,
     FooterComponent,
     HomeComponent,
-    ArtistsComponent
+    ArtistsComponent,
+    RegisterComponent,
+    ErrorPageComponent,
+    ArtistComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

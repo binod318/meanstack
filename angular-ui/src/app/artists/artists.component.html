@@ -1,3 +1,11 @@
 <ul>
-    
+    <li *ngFor="let artist of artists">
+        <a routerLink="/artist/{{artist._id}}">
+            {{artist.artistName}}
+        </a>
+
+        <a class="space-added">
+            delete
+        </a>
+    </li>
 </ul>
