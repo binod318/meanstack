@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
+import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -11,7 +13,7 @@ import { ArtistsComponent } from './artists/artists.component';
 import { RegisterComponent } from './register/register.component';
 import { ErrorPageComponent } from './error-page/error-page.component';
 import { ArtistComponent } from './artist/artist.component';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ArtistFormComponent } from './artist-form/artist-form.component';
 
 @NgModule({
   declarations: [
@@ -22,13 +24,15 @@ import { ReactiveFormsModule } from '@angular/forms';
     ArtistsComponent,
     RegisterComponent,
     ErrorPageComponent,
-    ArtistComponent
+    ArtistComponent,
+    ArtistFormComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

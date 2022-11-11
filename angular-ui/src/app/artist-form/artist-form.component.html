@@ -1,0 +1,30 @@
+<form #artistForm="ngForm" (ngSubmit)="onSubmit()">
+    <div>
+        <label>Name:</label>
+        <input name="artistName" ngModel/>
+    </div>
+    <div>
+        <label>Born year:</label>
+        <input name="bornYear" ngModel/>
+    </div>
+    <div>
+        <label>Gender:</label>
+        <input name="gender" ngModel/>
+    </div>
+    <div>
+        <label>Nation:</label>
+        <input name="nation" ngModel/>
+    </div>
+    <div>
+        <label>First song:</label>
+        <input name="firstSong" ngModel/>
+    </div>
+    <div>
+        <label>Bands:</label>
+        <input name="bands" ngModel/>
+    </div>
+    <div>
+        <input type="submit" value="Add"/>
+        <input type="submit" value="Update"/>
+    </div>
+</form>

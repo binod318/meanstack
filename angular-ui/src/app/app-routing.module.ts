@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { ArtistFormComponent } from './artist-form/artist-form.component';
 import { ArtistComponent } from './artist/artist.component';
 import { ArtistsComponent } from './artists/artists.component';
 import { ErrorPageComponent } from './error-page/error-page.component';
@@ -22,6 +23,10 @@ const routes: Routes = [
   {
     path: 'register',
     component: RegisterComponent
+  },
+  {
+    path: 'artistform',
+    component: ArtistFormComponent
   },
   {
     path: '**',
