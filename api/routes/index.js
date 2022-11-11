@@ -1,6 +1,7 @@
 const express = require('express');
 const artistController = require('../controllers/artistController');
 const songController = require('../controllers/songController');
+const userController = require('../controllers/userController');
 const router = express.Router();
 
 //routs for main document - artist
@@ -24,5 +25,10 @@ router.route("/artists/:artistId/songs/:songId")
    .put(songController.fullUpdate)
    .patch(songController.partialUpdate)
    .delete(songController.deleteOne);
+
+//routes for user
+router.route("/users")
+   .get(userController.getAll)
+   .post(userController.addUser);
 
 module.exports = router;

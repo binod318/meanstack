@@ -2,3 +2,7 @@ label {
     min-width: 130px;
     margin-bottom: 8px;
 }
+
+form {
+    margin: 10px;
+}

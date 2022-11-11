@@ -1,4 +1,4 @@
-<form [formGroup]="registrationForm" (ngSubmit)="onSubmit(registrationForm)">
+<form [formGroup]="registrationForm" (ngSubmit)="onSubmit()">
     <div>
         <label>Name: </label>
         <input formControlName="name" placeholder="Your name"/>
@@ -9,11 +9,11 @@
     </div>
     <div>
         <label>Password: </label>
-        <input formControlName="password" placeholder="Password"/>
+        <input formControlName="password" type="password" placeholder="Password"/>
     </div>
     <div>
         <label>Confirm password: </label>
-        <input formControlName="confirmPassword" placeholder="Confirm password"/>
+        <input formControlName="confirmPassword" type="password" placeholder="Confirm password"/>
     </div>
     <div>
         <input type="submit" value="Register"/>
