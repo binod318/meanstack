@@ -10,12 +10,16 @@ import { Artist } from '../artists/artists.component';
 })
 export class ArtistComponent implements OnInit {
   artist!: Artist;
-  constructor(private _artistsService:ArtistsDataService, private _route:ActivatedRoute) { }
+  constructor(private _artistsService:ArtistsDataService, private _route:ActivatedRoute) { 
+    this.artist = new Artist("", 0, "","",[""],"");
+  }
 
   ngOnInit(): void {
     const artistId = this._route.snapshot.params['artistId'];
     this._artistsService.getArtist(artistId).subscribe(artist => {
       this.artist = artist;
+      console.log(this.artist);
+      
     })
   }
 

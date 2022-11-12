@@ -1,0 +1,13 @@
+form {
+    margin: 10px;
+}
+
+label {
+    min-width: 100px;
+    margin-top: 10px;
+}
+
+input[type=submit]{
+    min-width: 70px;
+    margin: 10px 0;
+}

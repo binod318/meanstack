@@ -4,7 +4,11 @@
             {{artist.artistName}}
         </a>
 
-        <a class="space-added">
+        <a class="space-added" routerLink="/artistform/{{artist._id}}">
+            edit
+        </a>
+
+        <a class="space-added" (click)="onDelete(artist._id)">
             delete
         </a>
     </li>

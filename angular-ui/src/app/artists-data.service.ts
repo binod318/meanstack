@@ -26,4 +26,14 @@ export class ArtistsDataService {
     const url = this._baseUrl + "/artists";
     return this._http.post<Artist>(url, artist.ToJson());
   }
+
+  public updateArtist(artist: Artist): Observable<void>{
+    const url = this._baseUrl + "/artists/" + artist._id;
+    return this._http.put<void>(url, artist.ToJson());
+  }
+
+  public deleteArtist(artistId: String): Observable<void>{
+    const url = this._baseUrl + "/artists/" + artistId;
+    return this._http.delete<void>(url);
+  }
 }

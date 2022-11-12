@@ -63,6 +63,16 @@ export class ArtistsComponent implements OnInit {
   constructor(private _artistsService:ArtistsDataService) { }
 
   ngOnInit(): void {
+    this._fetchArtists();
+  }
+
+  onDelete(artistId:String){
+    this._artistsService.deleteArtist(artistId).subscribe(() => {
+      this._fetchArtists();
+    })
+  }
+
+  _fetchArtists(){
     this._artistsService.getArtists().subscribe(artists => {
       this.artists = artists;
     });

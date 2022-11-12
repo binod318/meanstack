@@ -14,6 +14,7 @@ import { RegisterComponent } from './register/register.component';
 import { ErrorPageComponent } from './error-page/error-page.component';
 import { ArtistComponent } from './artist/artist.component';
 import { ArtistFormComponent } from './artist-form/artist-form.component';
+import { LoginComponent } from './login/login.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { ArtistFormComponent } from './artist-form/artist-form.component';
     RegisterComponent,
     ErrorPageComponent,
     ArtistComponent,
-    ArtistFormComponent
+    ArtistFormComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,

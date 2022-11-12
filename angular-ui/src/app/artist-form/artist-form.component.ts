@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ArtistsDataService } from '../artists-data.service';
 import { Artist } from '../artists/artists.component';
 
@@ -11,12 +12,15 @@ import { Artist } from '../artists/artists.component';
 export class ArtistFormComponent implements OnInit {
 
   artist!:Artist;
+  artistId!:string;
 
   //field injection from form
   @ViewChild('artistForm')
   artistForm!:NgForm;
 
-  constructor(private _artistsService:ArtistsDataService) { }
+  constructor(private _artistsService:ArtistsDataService, 
+              private _route:ActivatedRoute,
+              private _router:Router) { }
 
   ngOnInit(): void {
 
@@ -27,8 +31,19 @@ export class ArtistFormComponent implements OnInit {
   }
 
   initializeForm(){
-    this.artist = new Artist("", 0, "","",[""],"");
-    this.artistForm.setValue(this.artist.ToJson());
+    this.artistId = this._route.snapshot.params['artistId'];
+    console.log('ArtistId', this.artistId);
+
+    //if artistId is passed in params then this form should work as edit form
+    if(this.artistId){
+      this._artistsService.getArtist(this.artistId).subscribe(artist =>{
+        this.artist = new Artist(artist.artistName, artist.bornYear, artist.gender,artist.nation,artist.bands,artist.firstSong);
+        this.artistForm.setValue(this.artist.ToJson());
+      })
+    } else {
+      this.artist = new Artist("", 0, "","",[""],"");
+      this.artistForm.setValue(this.artist.ToJson());
+    }
   }
 
   onSubmit(){
@@ -41,11 +56,19 @@ export class ArtistFormComponent implements OnInit {
       this.artistForm.controls['firstSong'].value
     );
 
-    this._artistsService.addArtist(newArtist).subscribe(artist => {
-      //if the response has _id, it means add operation is successfull
-      if(artist._id){
-        this.initializeForm();
-      }
-    })
+    //update
+    if(this.artistId){
+      newArtist._id = this.artistId;    
+      this._artistsService.updateArtist(newArtist).subscribe(() => {
+          this._router.navigate(["artists"]);
+      });
+    } else {
+      this._artistsService.addArtist(newArtist).subscribe(artist => {
+        //if the response has _id, it means add operation is successfull
+        if(artist._id){
+          this.initializeForm();
+        }
+      });
+    }
   }
 }

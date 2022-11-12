@@ -5,6 +5,7 @@ import { ArtistComponent } from './artist/artist.component';
 import { ArtistsComponent } from './artists/artists.component';
 import { ErrorPageComponent } from './error-page/error-page.component';
 import { HomeComponent } from './home/home.component';
+import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 
 const routes: Routes = [
@@ -27,6 +28,14 @@ const routes: Routes = [
   {
     path: 'artistform',
     component: ArtistFormComponent
+  },
+  {
+    path: 'artistform/:artistId',
+    component: ArtistFormComponent
+  },
+  {
+    path: 'login',
+    component: LoginComponent
   },
   {
     path: '**',

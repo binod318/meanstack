@@ -17,4 +17,9 @@ export class UserDataService {
     
     return this._http.post<User>(url, user.ToJson());
   }
+
+  public login(user: User): Observable<User>{
+    const url = this._baseUrl + "/users/login";
+    return this._http.post<User>(url, user.ToJson());
+  }
 }
