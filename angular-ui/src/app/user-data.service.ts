@@ -13,8 +13,6 @@ export class UserDataService {
 
   public createUser(user: User): Observable<User> {
     const url = this._baseUrl + "/users/";
-    console.log(user);
-    
     return this._http.post<User>(url, user.ToJson());
   }
 

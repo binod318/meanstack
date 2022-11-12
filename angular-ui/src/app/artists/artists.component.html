@@ -1,15 +1,35 @@
-<ul>
-    <li *ngFor="let artist of artists">
-        <a routerLink="/artist/{{artist._id}}">
-            {{artist.artistName}}
-        </a>
+<div class="artists">
 
-        <a class="space-added" routerLink="/artistform/{{artist._id}}">
-            edit
-        </a>
+    <ul>
+        <li *ngFor="let artist of artists">
+            <a routerLink="/artist/{{artist._id}}">
+                {{artist.artistName}}
+            </a>
 
-        <a class="space-added" (click)="onDelete(artist._id)">
-            delete
-        </a>
-    </li>
-</ul>
+            <a class="space-added" routerLink="/artistform/{{artist._id}}">
+                edit
+            </a>
+
+            <a class="space-added" (click)="onDelete(artist._id)">
+                delete
+            </a>
+        </li>
+    </ul>
+
+    <br/>
+    <div>
+        Display 
+        <select class="page-size" [ngModel]="countList" (ngModelChange)="onPageSizeChange($event)">
+            
+            <option *ngFor="let count of countList" [ngValue]="count">{{count}}</option>
+        </select>
+        of 
+        <input class="total" [disabled]="true" value="{{total}}"/>
+    </div>
+    <div class="pagination">
+        <button (click)="onPrevious()" [disabled]="pageNumber===1">Previous</button>
+        <label>Page: {{pageNumber}}</label>
+        <button (click)="onNext()" [disabled]="disableNext">Next</button>
+    </div>
+
+</div>

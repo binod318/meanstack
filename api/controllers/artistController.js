@@ -107,6 +107,23 @@ const _update = function(req, res, update){
     }); 
 }
 
+
+const getTotalCount = function(req, res) {
+    console.log("Get total count request received");
+
+    Artist.find().count(function(err, count) {
+        //check error response
+        let response = _checkError(err);
+        if(!response) {
+            response = {
+                status: process.env.OK_STATUS_CODE,
+                message: count
+            }
+        }
+        _sendResponse(res, response);
+    });
+};
+
 const getAll = function(req, res) {
     console.log("Get all request received");
 
@@ -239,10 +256,11 @@ const deleteOne = function(req, res) {
 };
 
 module.exports = {
-  getAll,
-  getOne,
-  addOne,
-  fullUpdate,
-  partialUpdate,
-  deleteOne
+    getTotalCount,
+    getAll,
+    getOne,
+    addOne,
+    fullUpdate,
+    partialUpdate,
+    deleteOne
 }

@@ -9,6 +9,9 @@ router.route("/artists")
    .get(artistController.getAll)
    .post(artistController.addOne);
 
+router.route("/artists/totalcount")
+   .get(artistController.getTotalCount);
+
 router.route("/artists/:artistId")
    .get(artistController.getOne)
    .put(artistController.fullUpdate)

@@ -12,8 +12,18 @@ export class ArtistsDataService {
 
   constructor(private _http:HttpClient) { }
 
-  public getArtists(): Observable<Artist[]> {
-    const url = this._baseUrl + '/artists';
+  public getTotalCount(): Observable<number> {
+    const url = this._baseUrl + '/artists/totalcount';
+    return this._http.get<number>(url);
+  }
+
+  public getArtists(pageNr:number, pageSize:number): Observable<Artist[]> {
+    const offset = (pageNr && pageSize ? ('offset=' + ((pageNr - 1) * pageSize) + '&') : '');
+    const count = (pageSize ? ('count=' + pageSize): '');
+    let queryString = offset + count;
+    queryString = queryString ? ("?" + queryString) : '';
+ 
+    const url = this._baseUrl + '/artists' + queryString;
     return this._http.get<Artist[]>(url);
   }
 

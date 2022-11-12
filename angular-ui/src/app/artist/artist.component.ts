@@ -18,8 +18,6 @@ export class ArtistComponent implements OnInit {
     const artistId = this._route.snapshot.params['artistId'];
     this._artistsService.getArtist(artistId).subscribe(artist => {
       this.artist = artist;
-      console.log(this.artist);
-      
     })
   }
 

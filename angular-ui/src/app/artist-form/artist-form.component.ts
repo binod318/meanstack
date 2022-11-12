@@ -32,7 +32,6 @@ export class ArtistFormComponent implements OnInit {
 
   initializeForm(){
     this.artistId = this._route.snapshot.params['artistId'];
-    console.log('ArtistId', this.artistId);
 
     //if artistId is passed in params then this form should work as edit form
     if(this.artistId){

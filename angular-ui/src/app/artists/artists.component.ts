@@ -60,9 +60,16 @@ export class Artist {
 })
 export class ArtistsComponent implements OnInit {
   artists: Artist[] = [];
+  total!:number;
+  countList: number[] = [];
+  pageSize!:number;
+  pageNumber: number = 1;
+  disableNext: boolean = true;
+
   constructor(private _artistsService:ArtistsDataService) { }
 
   ngOnInit(): void {
+    this._fetchTotalCount();
     this._fetchArtists();
   }
 
@@ -72,9 +79,48 @@ export class ArtistsComponent implements OnInit {
     })
   }
 
+  _fetchTotalCount(){
+    this._artistsService.getTotalCount().subscribe(total => {
+      this.total = total;
+
+      for(let i = 0; i< total; i++){
+        this.countList.push(i+1);
+      }
+    });
+  }
+
   _fetchArtists(){
-    this._artistsService.getArtists().subscribe(artists => {
+    this._artistsService.getArtists(this.pageNumber, this.pageSize).subscribe(artists => {
       this.artists = artists;
     });
+  }
+
+  onPageSizeChange(size: number){
+    this.pageSize = size;
+    this.pageNumber = 1;
+    this._fetchArtists();
+    this.toggleNextBtn();
+  }
+
+  onPrevious(){
+    this.pageNumber --;
+    this.toggleNextBtn();
+    this._fetchArtists();
+  }
+
+  onNext(){
+    this.pageNumber ++;
+    this.toggleNextBtn();
+    this._fetchArtists();
+  }
+
+  toggleNextBtn(){
+    console.log(this.pageNumber , Math.ceil(this.total / this.pageSize));
+    
+    if(this.pageNumber < Math.ceil(this.total / this.pageSize)){
+      this.disableNext = false;
+    } else {
+      this.disableNext = true;
+    }
   }
 }
