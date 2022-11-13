@@ -17,12 +17,18 @@ export class ArtistsDataService {
     return this._http.get<number>(url);
   }
 
-  public getArtists(pageNr:number, pageSize:number): Observable<Artist[]> {
+  public getArtists(pageNr:number, pageSize:number, search:string, lat:string, lng:string, minDist:string, maxDist:string): Observable<Artist[]> {
     const offset = (pageNr && pageSize ? ('offset=' + ((pageNr - 1) * pageSize) + '&') : '');
     const count = (pageSize ? ('count=' + pageSize): '');
+
     let queryString = offset + count;
+    queryString = search ? ((queryString ? (queryString + '&') : '') + 'search=' + search) : queryString;
+    queryString = (lat && lng) ? ((queryString ? (queryString + '&') : '') + 'lat=' + lat + '&lng=' + lng) : queryString;
+    queryString = (lat && lng && minDist) ? ((queryString ? (queryString + '&') : '') + 'minDist=' + minDist) : queryString;
+    queryString = (lat && lng && maxDist) ? ((queryString ? (queryString + '&') : '') + 'maxDist=' + maxDist) : queryString;
+    
     queryString = queryString ? ("?" + queryString) : '';
- 
+
     const url = this._baseUrl + '/artists' + queryString;
     return this._http.get<Artist[]>(url);
   }

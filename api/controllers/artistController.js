@@ -107,6 +107,69 @@ const _update = function(req, res, update){
     }); 
 }
 
+const _runGeoSearchQuery = function(req, res, offset, count){
+
+    let minDistance = parseFloat(process.env.GEO_SEARCH_DEFAULT_MIN_DISTANCE, process.env.NUMBER_BASE);
+    if(req.query && req.query.minDist){
+        minDistance = parseFloat(req.query.minDist, process.env.NUMBER_BASE);
+    }
+
+    let maxDistance = parseFloat(process.env.GEO_SEARCH_DEFAULT_MAX_DISTANCE, process.env.NUMBER_BASE);
+    if(req.query && req.query.maxDist){
+        maxDistance = parseFloat(req.query.maxDist, process.env.NUMBER_BASE);
+    }
+
+    // type check of the variables to be used
+    if(isNaN(minDistance) || isNaN(maxDistance)){
+        const response = {
+            status: process.env.CLIENT_ERROR_STATUS_CODE,
+            message: process.env.PARAMETER_TYPE_ERROR_MESSAGE
+        };
+        _sendResponse(res, response);
+        return;
+    }
+
+    const lng = parseFloat(req.query.lng, process.env.NUMBER_BASE);
+    const lat = parseFloat(req.query.lat, process.env.NUMBER_BASE);
+
+    const point = {type: "Point", coordinates: [lng, lat]};
+
+    let query = {};
+    if(req.query && req.query.search){
+        query = {artistName: RegExp(req.query.search),
+                "address.coordinates": {
+                    $near: {
+                        $geometry: point,
+                        $maxDistance: maxDistance,
+                        $minDistance: minDistance
+                    }
+        }}
+    } else {
+        //please check if this field is in index
+        query = {"address.coordinates": {
+            $near: {
+                $geometry: point,
+                $maxDistance: maxDistance,
+                $minDistance: minDistance
+            }
+        }}
+    }
+console.log(query);
+    Artist.find(query).skip(offset).limit(count).exec(function(err, artists) {
+        console.log(err);
+        //check error response
+        let response = _checkError(err);
+        if(!response){
+            response = {
+                status: process.env.OK_STATUS_CODE,
+                message: artists
+            }
+        }
+
+        _sendResponse(res, response);
+    });
+
+}
 
 const getTotalCount = function(req, res) {
     console.log("Get total count request received");
@@ -131,6 +194,7 @@ const getAll = function(req, res) {
     let offset=parseInt(process.env.DEFAULT_OFFSET, process.env.NUMBER_BASE);
     let count= parseInt(process.env.DEFAULT_COUNT, process.env.NUMBER_BASE);
     let maxCount = parseInt(process.env.MAX_COUNT, process.env.NUMBER_BASE);
+    let filter = {};
 
     //check query string parameters
     if(req.query && req.query.offset){
@@ -138,6 +202,9 @@ const getAll = function(req, res) {
     }
     if(req.query && req.query.count){
         count = parseInt(req.query.count, process.env.NUMBER_BASE);
+    }
+    if(req.query && req.query.search){
+        filter = {artistName: RegExp(req.query.search)};
     }
 
     // type check of the variables to be used
@@ -152,7 +219,12 @@ const getAll = function(req, res) {
         return;
     }
 
-    Artist.find().skip(offset).limit(count).exec(function(err, artists) {
+    if(req.query && req.query.lat && req.query.lng){
+        _runGeoSearchQuery(req, res, offset, count);
+        return;
+    }
+
+    Artist.find(filter).skip(offset).limit(count).exec(function(err, artists) {
         //check error response
         let response = _checkError(err);
         if(!response){
@@ -203,6 +275,7 @@ const addOne = function(req, res) {
         nation,
         gender,
         bands,
+        address,
         firstSong
     } = req.body;
 

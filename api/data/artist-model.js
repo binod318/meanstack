@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 const songSchema = require('./song-model');
 
+const addressSchema = mongoose.Schema({
+    coordinates: [Number]
+});
+
 const artistSchema = mongoose.Schema({
     artistName: {
         type: String,
@@ -21,6 +25,7 @@ const artistSchema = mongoose.Schema({
     gender: String,
     bands: [String],
     firstSong: String,
+    address: addressSchema,
     songs: [songSchema]
 });
 

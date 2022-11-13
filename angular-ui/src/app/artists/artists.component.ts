@@ -62,9 +62,16 @@ export class ArtistsComponent implements OnInit {
   artists: Artist[] = [];
   total!:number;
   countList: number[] = [];
+  disableNext: boolean = true;
+
   pageSize!:number;
   pageNumber: number = 1;
-  disableNext: boolean = true;
+
+  searchName!: string;
+  searchLatitude!: string;
+  searchLongitude!: string;
+  minDistance!:string;
+  maxDistance!:string;
 
   constructor(private _artistsService:ArtistsDataService) { }
 
@@ -73,7 +80,7 @@ export class ArtistsComponent implements OnInit {
     this._fetchArtists();
   }
 
-  onDelete(artistId:String){
+  onDelete(artistId:string){
     this._artistsService.deleteArtist(artistId).subscribe(() => {
       this._fetchArtists();
     })
@@ -90,7 +97,7 @@ export class ArtistsComponent implements OnInit {
   }
 
   _fetchArtists(){
-    this._artistsService.getArtists(this.pageNumber, this.pageSize).subscribe(artists => {
+    this._artistsService.getArtists(this.pageNumber, this.pageSize, this.searchName, this.searchLatitude, this.searchLongitude, this.minDistance, this.maxDistance).subscribe(artists => {
       this.artists = artists;
     });
   }
@@ -122,5 +129,9 @@ export class ArtistsComponent implements OnInit {
     } else {
       this.disableNext = true;
     }
+  }
+
+  onKeyEnter(){
+    this._fetchArtists();
   }
 }
