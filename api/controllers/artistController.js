@@ -1,59 +1,14 @@
 const mongoose = require('mongoose');
+const {
+    getInt,
+    createResponse,
+    createErrorResponse,
+    createDbResponse,
+    sendResponse,
+    validateObjectId
+} = require('./baseController');
 
 const Artist = mongoose.model(process.env.ARTIST_MODEL);
-
-const _sendResponse = function(res, response){
-    res.status(parseInt(response.status, process.env.NUMBER_BASE)).json(response.message);
-}
-
-//check if id provided is valid document objectid type
-const _validateObjectId = function(id){
-    const validObjectId = mongoose.isValidObjectId(id);
-    if(!validObjectId){
-        const response = {
-            status: process.env.FILE_NOT_FOUND_STATUS_CODE,
-            message: process.env.INVALID_DOCUMENT_OBJECT_ID_MESSAGE + id
-        };
-        return response;
-    }
-}
-
-const _checkError = function(error){
-    //check error response
-    if(error){ 
-        const response = {
-            status: process.env.SERVER_ERROR_STATUS_CODE,
-            message: error
-        };
-        return response;
-    }  
-}
-
-const _checkDbResponse = function(dbResponse){
-    //check if artist exists with given id
-    if(dbResponse === null){ 
-        const response = {
-            status: process.env.FILE_NOT_FOUND_STATUS_CODE,
-            message: process.env.INVALID_IDENTIFIER_MESSAGE
-        };
-        return response;
-    } 
-}
-
-const _updateAndSendResponse = function(res, artist){
-    //save updated object to database
-    artist.save(function(err, updatedArtist){
-        //check error response
-        let response = _checkError(err);
-        if(!response){
-            response = {
-                status: process.env.UPDATE_SUCCESS_STATUS_CODE,
-                message: updatedArtist
-            };
-        }
-        _sendResponse(res, response);
-    })
-}
 
 const _fullUpdate = function(req, artist){
     artist.artistName   = req.body.artistName     
@@ -88,23 +43,34 @@ const _partialUpdate = function(req, artist){
 const _update = function(req, res, update){
     const artistId = req.params.artistId;
     //validate if provided artistId is valid document id
-    const response = _validateObjectId(artistId);
+    let response = validateObjectId(artistId);
     if(response){
-        _sendResponse(res, response);
+        sendResponse(res, response);
         return;
     }
-    Artist.findById(artistId).exec(function(err, artist){
-        let response = _checkError(err);
-        if(!response){
-            response = _checkDbResponse(artist);
-            if(response){
-                _sendResponse(res, response);
+    
+    Artist.findById(artistId).exec()
+        .then(artist => {
+            if(artist === null){
+                response = createDbResponse();
+                sendResponse(res, response);
             } else {
+                response = createResponse(process.env.UPDATE_SUCCESS_STATUS_CODE, artist);
                 update(req, artist);
-                _updateAndSendResponse(res, artist);
+
+                //update to database
+                artist.save()
+                    .then(updatedArtist => response.message = updatedArtist)
+                    .catch(error => response = createErrorResponse(error))
+                    .finally(() => {
+                        sendResponse(res, response);
+                    });
             }
-        }
-    }); 
+        })
+        .catch(error => {
+            response = createErrorResponse(error);
+            sendResponse(res, response);
+        });
 }
 
 const _runGeoSearchQuery = function(req, res, offset, count){
@@ -119,18 +85,15 @@ const _runGeoSearchQuery = function(req, res, offset, count){
         maxDistance = parseFloat(req.query.maxDist, process.env.NUMBER_BASE);
     }
 
-    // type check of the variables to be used
-    if(isNaN(minDistance) || isNaN(maxDistance)){
-        const response = {
-            status: process.env.CLIENT_ERROR_STATUS_CODE,
-            message: process.env.PARAMETER_TYPE_ERROR_MESSAGE
-        };
-        _sendResponse(res, response);
-        return;
-    }
-
     const lng = parseFloat(req.query.lng, process.env.NUMBER_BASE);
     const lat = parseFloat(req.query.lat, process.env.NUMBER_BASE);
+
+    // type check of the variables to be used
+    if(isNaN(minDistance) || isNaN(maxDistance) || isNaN(lng) || isNaN(lat)){
+        const response = createResponse(process.env.CLIENT_ERROR_STATUS_CODE, process.env.PARAMETER_TYPE_ERROR_MESSAGE);
+        sendResponse(res, response);
+        return;
+    }
 
     const point = {type: "Point", coordinates: [lng, lat]};
 
@@ -154,54 +117,42 @@ const _runGeoSearchQuery = function(req, res, offset, count){
             }
         }}
     }
-console.log(query);
-    Artist.find(query).skip(offset).limit(count).exec(function(err, artists) {
-        console.log(err);
-        //check error response
-        let response = _checkError(err);
-        if(!response){
-            response = {
-                status: process.env.OK_STATUS_CODE,
-                message: artists
-            }
-        }
 
-        _sendResponse(res, response);
-    });
+    let response = createResponse();
+
+    Artist.find(query).skip(offset).limit(count).exec()
+        .then(artists => response.message = artists)
+        .catch(err => response = createErrorResponse(err))
+        .finally(()=> sendResponse(res, response));
 
 }
 
 const getTotalCount = function(req, res) {
     console.log("Get total count request received");
 
-    Artist.find().count(function(err, count) {
-        //check error response
-        let response = _checkError(err);
-        if(!response) {
-            response = {
-                status: process.env.OK_STATUS_CODE,
-                message: count
-            }
-        }
-        _sendResponse(res, response);
-    });
+    let response = createResponse();
+    Artist.find().count()
+        .then(count => response.message = count )
+        .catch(err => response = createErrorResponse(err))
+        .finally(() => sendResponse(res, response));
+
 };
 
 const getAll = function(req, res) {
     console.log("Get all request received");
 
     //get value from environment variable
-    let offset=parseInt(process.env.DEFAULT_OFFSET, process.env.NUMBER_BASE);
-    let count= parseInt(process.env.DEFAULT_COUNT, process.env.NUMBER_BASE);
-    let maxCount = parseInt(process.env.MAX_COUNT, process.env.NUMBER_BASE);
+    let offset=getInt(process.env.DEFAULT_OFFSET);
+    let count= getInt(process.env.DEFAULT_COUNT);
+    let maxCount = getInt(process.env.MAX_COUNT);
     let filter = {};
 
     //check query string parameters
     if(req.query && req.query.offset){
-        offset = parseInt(req.query.offset, process.env.NUMBER_BASE);
+        offset = getInt(req.query.offset);
     }
     if(req.query && req.query.count){
-        count = parseInt(req.query.count, process.env.NUMBER_BASE);
+        count = getInt(req.query.count);
     }
     if(req.query && req.query.search){
         filter = {artistName: RegExp(req.query.search)};
@@ -209,13 +160,15 @@ const getAll = function(req, res) {
 
     // type check of the variables to be used
     if(isNaN(offset) || isNaN(count)){
-        res.status(parseInt(process.env.CLIENT_ERROR_STATUS_CODE)).json({message: process.env.PARAMETER_TYPE_ERROR_MESSAGE});
+        const response = createResponse(process.env.CLIENT_ERROR_STATUS_CODE, process.env.PARAMETER_TYPE_ERROR_MESSAGE);
+        sendResponse(res, response);
         return;
     }
 
     //limit check
     if(count > maxCount){
-        res.status(parseInt(process.env.CLIENT_ERROR_STATUS_CODE)).json({message: process.env.LIMIT_EXCEED_MESSAGE + maxCount});
+        const response = createResponse(process.env.CLIENT_ERROR_STATUS_CODE, process.env.LIMIT_EXCEED_MESSAGE);
+        sendResponse(res, response);
         return;
     }
 
@@ -224,46 +177,37 @@ const getAll = function(req, res) {
         return;
     }
 
-    Artist.find(filter).skip(offset).limit(count).exec(function(err, artists) {
-        //check error response
-        let response = _checkError(err);
-        if(!response){
-            response = {
-                status: process.env.OK_STATUS_CODE,
-                message: artists
-            }
-        }
+    //initial response object
+    let response = createResponse();
 
-        _sendResponse(res, response);
-    });
-};
+    Artist.find(filter).skip(offset).limit(count).exec()
+        .then(artists => response.message = artists)
+        .catch(err => response = createErrorResponse(err))
+        .finally(()=> sendResponse(res, response));
+}
+
 const getOne = function(req, res) {
     console.log("GET One Received");
     const artistId = req.params.artistId;
 
     //validate if provided artistId is valid document id
-    const response = _validateObjectId(artistId);
+    let response = validateObjectId(artistId);
     if(response){
-        _sendResponse(res, response);
+        sendResponse(res, response);
         return;
     }
 
-    Artist.findById(artistId).exec(function(err, artist){
-        //check error response
-        let response = _checkError(err);
-        if(!response){
-            response = _checkDbResponse(artist);
-            if(!response){
-                response = {
-                    status: process.env.OK_STATUS_CODE,
-                    message: artist
-                }
+    response = createResponse();
+    Artist.findById(artistId).exec()
+        .then(artist => {
+            if(artist === null){
+                response = createDbResponse();
+            } else {
+                response.message = artist
             }
-        }
-
-        //single termination points
-        _sendResponse(res, response);
-    });
+        })
+        .catch(error => response = createErrorResponse(error))
+        .finally(()=> sendResponse(res, response));
 };
 
 const addOne = function(req, res) {
@@ -279,18 +223,13 @@ const addOne = function(req, res) {
         firstSong
     } = req.body;
 
-    Artist.create(newArtist, function(err, artist){
-        //check error response
-        let response = _checkError(err);
-        if(!response){
-            response = {
-                status: process.env.CREATE_SUCCESS_STATUS_CODE,
-                message: artist
-            }
-        }
+    //initial response object
+    let response = createResponse(process.env.CREATE_SUCCESS_STATUS_CODE);
 
-        _sendResponse(res, response);
-    });
+    Artist.create(newArtist)
+        .then(artist => response.message = artist)
+        .catch(error => response = createErrorResponse(error))
+        .finally(() => sendResponse(res, response));
 };
 
 const fullUpdate = function(req, res) {
@@ -308,24 +247,24 @@ const deleteOne = function(req, res) {
     const artistId = req.params.artistId;
 
     //validate if provided artistId is valid document id
-    const response = _validateObjectId(artistId);
+    let response = validateObjectId(artistId);
     if(response){
-        _sendResponse(res, response);
+        sendResponse(res, response);
         return;
     }
 
-    Artist.findByIdAndDelete(artistId).exec(function(err, artist){
-        //check error response
-        let response = _checkError(err);
-        if(!response){
-            response = {
-                status: process.env.UPDATE_SUCCESS_STATUS_CODE,
-                message: artist
+    //initial response object
+    response = createResponse(process.env.CREATE_SUCCESS_STATUS_CODE);
+    Artist.findByIdAndDelete(artistId).exec()
+        .then(artist => {
+            if(artist === null){
+                response = createDbResponse();
+            } else {
+                response.message = artist
             }
-        }
-
-        _sendResponse(res, response);
-    })
+        })
+        .catch(error => response = createErrorResponse(error))
+        .finally(() => sendResponse(res, response));
 };
 
 module.exports = {
