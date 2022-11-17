@@ -1,18 +1,6 @@
+
 <div class="artists">
-
-    <div class="search-area">
-        <label>Artist name:</label>
-        <input [(ngModel)]="searchName" placeholder="Search by artist name:" (keyup.enter)="onKeyEnter()"/>
-        <label>Latitude:</label>
-        <input [(ngModel)]="searchLatitude" placeholder="Search by latitude" (keyup.enter)="onKeyEnter()"/>
-        <label>Longitude:</label>
-        <input [(ngModel)]="searchLongitude" placeholder="Search by longitude:" (keyup.enter)="onKeyEnter()"/>
-        <label>Minimum Distance:</label>
-        <input [(ngModel)]="minDistance" placeholder="Min Distance for Geo Search" (keyup.enter)="onKeyEnter()"/>
-        <label>Maximum Distance:</label>
-        <input [(ngModel)]="maxDistance" placeholder="Min Distance for Geo Search" (keyup.enter)="onKeyEnter()"/>
-    </div>
-
+    <h3>Artists List</h3>
     <ul>
         <li *ngFor="let artist of artists">
             <a routerLink="/artist/{{artist._id}}">
@@ -31,12 +19,13 @@
 
     <br/>
     <div>
-        Display 
-        <select class="page-size" [ngModel]="countList" (ngModelChange)="onPageSizeChange($event)">
-            
-            <option *ngFor="let count of countList" [ngValue]="count">{{count}}</option>
+        Displaying total
+        <select class="page-size" [(ngModel)]="pageSize" (ngModelChange)="onPageSizeChange($event)">
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="20">20</option>
         </select>
-        of 
+        records of 
         <input class="total" [disabled]="true" value="{{total}}"/>
     </div>
     <div class="pagination">

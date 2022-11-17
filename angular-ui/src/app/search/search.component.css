@@ -1,0 +1,24 @@
+.search-page {
+    margin: 10px;
+}
+.space-added {
+    margin-left: 20px;
+    cursor: pointer;
+    color: whitesmoke;
+}
+
+.search-area {
+    display: flex;
+    flex-direction: column;
+    width: 250px;
+    margin: 20px 0;
+    row-gap: 3px;
+}
+
+button {
+    width: 100px;
+}
+
+div {
+    overflow-y: scroll;
+}

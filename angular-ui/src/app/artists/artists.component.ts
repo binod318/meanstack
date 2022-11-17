@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ArtistsDataService } from '../artists-data.service';
+import { Filter } from '../search/search.component';
 
 export class Artist {
   #_id!:string;
@@ -53,6 +54,8 @@ export class Artist {
   }
 }
 
+
+
 @Component({
   selector: 'app-artists',
   templateUrl: './artists.component.html',
@@ -62,16 +65,10 @@ export class ArtistsComponent implements OnInit {
   artists: Artist[] = [];
   total!:number;
   countList: number[] = [];
-  disableNext: boolean = true;
+  disableNext: boolean = false;
 
-  pageSize!:number;
+  pageSize:number = 5;
   pageNumber: number = 1;
-
-  searchName!: string;
-  searchLatitude!: string;
-  searchLongitude!: string;
-  minDistance!:string;
-  maxDistance!:string;
 
   constructor(private _artistsService:ArtistsDataService) { }
 
@@ -82,6 +79,7 @@ export class ArtistsComponent implements OnInit {
 
   onDelete(artistId:string){
     this._artistsService.deleteArtist(artistId).subscribe(() => {
+      this._fetchTotalCount()
       this._fetchArtists();
     })
   }
@@ -97,8 +95,12 @@ export class ArtistsComponent implements OnInit {
   }
 
   _fetchArtists(){
-    this._artistsService.getArtists(this.pageNumber, this.pageSize, this.searchName, this.searchLatitude, this.searchLongitude, this.minDistance, this.maxDistance).subscribe(artists => {
+    const count = this.pageSize;
+    const offset = (this.pageNumber - 1) * count;
+    const filter = new Filter(offset,count,"","","","","");
+    this._artistsService.getArtists(filter).subscribe(artists => {
       this.artists = artists;
+      this.toggleNextBtn();
     });
   }
 
@@ -106,18 +108,15 @@ export class ArtistsComponent implements OnInit {
     this.pageSize = size;
     this.pageNumber = 1;
     this._fetchArtists();
-    this.toggleNextBtn();
   }
 
   onPrevious(){
     this.pageNumber --;
-    this.toggleNextBtn();
     this._fetchArtists();
   }
 
   onNext(){
     this.pageNumber ++;
-    this.toggleNextBtn();
     this._fetchArtists();
   }
 
@@ -129,9 +128,5 @@ export class ArtistsComponent implements OnInit {
     } else {
       this.disableNext = true;
     }
-  }
-
-  onKeyEnter(){
-    this._fetchArtists();
   }
 }
