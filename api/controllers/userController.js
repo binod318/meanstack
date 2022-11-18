@@ -1,10 +1,13 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+
+const { getInt, debugLog } = require('../utilities');
 const {
-    getInt,
+    handleError,
+    checkObjectExistsInDB,
     createResponse,
     createErrorResponse,
-    createDbResponse,
     sendResponse,
     validateObjectId
 } = require('./baseController');
@@ -13,9 +16,9 @@ const User = mongoose.model(process.env.USER_MODEL);
 
 const getAll = function(req, res){
     let response = createResponse();
-    User.find().exec()
-        .then(users => response.message = users)
-        .catch(error => response = createErrorResponse(error))
+    User.find()
+        .then((users) => checkObjectExistsInDB(users, response))
+        .catch((error) => handleError(error, response))
         .finally(() => sendResponse(res, response));
 }
 
@@ -30,53 +33,68 @@ const getOne = function(req, res){
     }
 
     response = createResponse();
-    User.findById(userId).exec()
-        .then(user => response.message = user)
-        .catch(error => response = createErrorResponse(error))
+    User.findById(userId)
+        .then((user) => checkObjectExistsInDB(user, response))
+        .catch((error) => handleError(error, response))
         .finally(() => sendResponse(res, response));
 }
 
-const addUserSync = function(req, res){
-    console.log("addUser request received");
-
-    /*
-    I'm adding this validation here because the password will be filled with encrypted value 
-    if the value is sent empty from UI
-    */
-    if(req.body && !req.body.password){
-        const response ={
-            status: process.env.CLIENT_ERROR_STATUS_CODE,
-            message: process.env.PASSWORD_EMPTY_MESSAGE
+const _checkSaltExists = function(salt, response){
+    return new Promise((resolve, reject) => {
+        if(!salt){
+            debugLog("DB object doesn't exists");
+            response.status = process.env.SERVER_ERROR_STATUS_CODE; 
+            response.message = process.env.SALT_GENERATE_ISSUE_MESSAGE;
+            reject();
+        } else {
+            resolve(salt);
         }
-        _sendResponse(res, response);
-        return;
-    }
+    })
+}
 
-    const saltValue = bcrypt.genSaltSync(parseInt(process.env.SALT_NUMBER_OF_ROUNDS, process.env.NUMBER_BASE));
-    const passwordHash = bcrypt.hashSync(req.body.password, saltValue);
+const _checkPasswordHash = function(passwordHash, req, response){
 
-    const newUser = {
-        name: req.body.user,
-        username: req.body.username,
-        password: passwordHash
-    };
-
-    User.create(newUser, function(err, user){
-        let response = _checkError(err);
-
-        if(!response){
-            response = {
-                status: process.env.CREATE_SUCCESS_STATUS_CODE,
-                message: user
-            }
+    return new Promise((resolve, reject) => {
+        if(!passwordHash){
+            response.status = process.env.SERVER_ERROR_STATUS_CODE;
+            response.message = process.env.SALT_GENERATE_ISSUE_MESSAGE;
+            reject();
+        } else {
+            const newUser = {
+                name: req.body.name,
+                username: req.body.username,
+                password: passwordHash
+            };
+        
+            User.create(newUser)
+                .then((user) => {
+                    checkObjectExistsInDB(user, response);
+                    resolve();
+                })
+                .catch((error) => {
+                    handleError(error, response);
+                    reject();
+                });
         }
+    })
+}
 
-        _sendResponse(res, response);
+const _createPasswordHash = function(salt, req, response){
+    return new Promise((resolve, reject) => {
+        bcrypt.hash(req.body.password, salt)
+            .then((passwordHash) => {
+                _checkPasswordHash(passwordHash, req, response);
+                resolve();
+            })
+            .catch((error) => {
+                handleError(error, response);
+                reject();
+            });
     })
 }
 
 const addUser = function(req, res){
-    console.log("addUser request received");
+    debugLog("addUser request received");
 
     /*
     I'm adding this validation here because the password will be filled with encrypted value 
@@ -93,75 +111,14 @@ const addUser = function(req, res){
 
     let response = createResponse(process.env.CREATE_SUCCESS_STATUS_CODE);
     bcrypt.genSalt(saltRound)
-        .then(salt => {
-            if(!salt){
-                response = createResponse(process.env.SERVER_ERROR_STATUS_CODE, process.env.SALT_GENERATE_ISSUE_MESSAGE);
-                sendResponse(res, response);
-            } else {
-                bcrypt.hash(req.body.password, salt)
-                    .then(passwordHash => {
-                        if(!passwordHash){
-                            response = createResponse(process.env.SERVER_ERROR_STATUS_CODE, process.env.SALT_GENERATE_ISSUE_MESSAGE);
-                            sendResponse(res, response);
-                        } else {
-                            const newUser = {
-                                name: req.body.user,
-                                username: req.body.username,
-                                password: passwordHash
-                            };
-                        
-                            User.create(newUser)
-                                .then(user => response.message = user)
-                                .catch(error => response = createErrorResponse(error))
-                                .finally(() => sendResponse(res, response));
-                        }
-                    })
-                    .catch(error => {
-                        response = createErrorResponse(error);
-                        sendResponse(res, response);
-                    })
-            }
-        })
-        .catch(error => {
-            response = createErrorResponse(error);
-            sendResponse(res, response);
-        });
-
-    // bcrypt.genSalt(saltRound, function(err, salt){ //nested callback chain or callback hell
-    //     let response = _checkError(err); //if there is error while generating salt
-    //     if(response){
-    //         _sendResponse(res, response);
-    //     } else {
-    //         bcrypt.hash(req.body.password, salt, function(err, passwordHash){
-    //             let response = _checkError(err); //if there is error while getting password hash
-    //             if(response){
-    //                 _sendResponse(res, response);
-    //             } else {
-    //                 const newUser = {
-    //                     name: req.body.user,
-    //                     username: req.body.username,
-    //                     password: passwordHash
-    //                 };
-                
-    //                 User.create(newUser, function(err, user){
-    //                     let response = _checkError(err); // check error if there is error while creating user
-    //                     if(!response){
-    //                         response = {
-    //                             status: process.env.CREATE_SUCCESS_STATUS_CODE,
-    //                             message: user
-    //                         }
-    //                     }
-                
-    //                     _sendResponse(res, response);
-    //                 })
-    //             }
-    //         })
-    //     }
-    // });
+        .then((salt) => _checkSaltExists(salt, response))
+        .then((salt) => _createPasswordHash(salt, req, response))
+        .catch((error) => handleError(error, response))
+        .finally(() => sendResponse(res, response));
 }
 
 const deleteOne = function(req, res) {
-    console.log("Delete artist request received");
+    debugLog("Delete artist request received");
     const userId = req.params.userId;
 
     //validate if provided artistId is valid document id
@@ -172,21 +129,14 @@ const deleteOne = function(req, res) {
     }
 
     response = createResponse(process.env.UPDATE_SUCCESS_STATUS_CODE);
-    User.findByIdAndDelete(userId).exec()
-        .then(user => {
-            if(user === null){
-                response = createDbResponse();
-            } else {
-                response.message = user
-            }
-        })
-        .catch(error => response = createErrorResponse(error))
+    User.findByIdAndDelete(userId)
+        .then((user) => checkObjectExistsInDB(user, response))
+        .catch((error) => handleError(error, response))
         .finally(() => sendResponse(res, response));
-
 };
 
 const loginSync = function(req, res){
-    console.log('Login request received');
+    debugLog('Login request received');
     const username = req.body.username;
     const password = req.body.password;
 
@@ -211,8 +161,34 @@ const loginSync = function(req, res){
         .finally(() => sendResponse(res, response));
 }
 
+const _checkPassword = function(password, user, response){
+    debugLog('check password!')
+    return new Promise((resolve, reject) => {
+        bcrypt.compare(password, user.password)
+            .then((passwordMatch) => {
+                if(passwordMatch){
+                    resolve(user);
+                } else {
+                    response.status = process.env.FILE_NOT_FOUND_STATUS_CODE;
+                    response.message = process.env.INVALID_CREDENTIAL_MESSAGE;
+                    reject();
+                }
+            })
+            .catch(error => {
+                handleError(error, response);
+                reject()
+            });
+    })
+}
+
+const _generateToken = function(user, response){
+    debugLog("generate token");
+    const token = jwt.sign({name: user.name}, process.env.JWT_PASSWORD, {expiresIn: 3600} );
+    response.message = { success: true, token: token };
+}
+
 const login = function(req, res){
-    console.log('Login request received');
+    debugLog('Login request received');
     const username = req.body.username;
     const password = req.body.password;
 
@@ -220,27 +196,11 @@ const login = function(req, res){
 
     let response = createResponse();
     User.findOne(user).exec()
-        .then(user => {
-            if(!user){
-                response = createResponse(process.env.FILE_NOT_FOUND_STATUS_CODE, process.env.INVALID_CREDENTIAL_MESSAGE);
-                sendResponse(res, response);
-            } else {
-                bcrypt.compare(password, user.password)
-                    .then(match => {
-                        if(match){
-                            response.message = user
-                        } else {
-                            response = createResponse(process.env.FILE_NOT_FOUND_STATUS_CODE, process.env.INVLAID_CREDENTIAL_MESSAGE);
-                        }
-                    })
-                    .catch(error => response = createErrorResponse(error))
-                    .finally(() => sendResponse(res, response));
-            }
-        })
-        .catch(error => {
-            response = createErrorResponse(error);
-            sendResponse(res, response);
-        });
+        .then((user) => checkObjectExistsInDB(user, response))
+        .then((user) => _checkPassword(password, user, response))
+        .then((user) => _generateToken(user, response))
+        .catch((error) => handleError(error, response))
+        .finally(() => sendResponse(res, response));
 }
 
 module.exports = {

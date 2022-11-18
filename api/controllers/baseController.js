@@ -1,7 +1,37 @@
 const mongoose = require('mongoose');
+const { getInt, debugLog } = require('../utilities');
 
-const getInt = function(num){
-    return parseInt(num, process.env.NUMBER_BASE);
+
+const handleError = function(error, response){
+    debugLog('handle error',error, response)
+    if(getInt(response.status) < 300){
+        response.status = process.env.SERVER_ERROR_STATUS_CODE;
+        response.message = error;
+    }  
+}
+
+const checkObjectExistsInDB = function(entity, response){
+    debugLog('check db object!')
+    //to chain a promise you need to return promise
+    return new Promise((resolve, reject) => {
+        if(!entity){
+            debugLog("DB object doesn't exists");
+            response.status = process.env.FILE_NOT_FOUND_STATUS_CODE; 
+            response.message = process.env.DOCUMENT_NOT_FOUND_MESSAGE;
+            reject("OKKKKK");
+        } else {
+            response.message = entity;
+            resolve(entity);
+        }
+    })
+
+    // if(!entity){
+    //     debugLog("DB object doesn't exists");
+    //     response.status = process.env.FILE_NOT_FOUND_STATUS_CODE; 
+    //     response.message = process.env.DOCUMENT_NOT_FOUND_MESSAGE;
+    // } else {
+    //     response.message = entity;
+    // }
 }
 
 const createResponse = function(status, message){
@@ -33,7 +63,8 @@ const validateObjectId = function(id){
 }
 
 module.exports = {
-    getInt,
+    handleError,
+    checkObjectExistsInDB,
     createResponse,
     createErrorResponse,
     createDbResponse,

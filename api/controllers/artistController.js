@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
+const { getInt, debugLog } = require('../utilities');
 const {
-    getInt,
+    handleError,
+    checkObjectExistsInDB,
     createResponse,
-    createErrorResponse,
-    createDbResponse,
     sendResponse,
     validateObjectId
 } = require('./baseController');
@@ -40,6 +40,23 @@ const _partialUpdate = function(req, artist){
         artist.firstSong    = req.body.firstSong; 
 }
 
+const _updateToDB = function(req, artist, response, update){
+
+    return new Promise((resolve, reject) => {
+        update(req, artist);
+        //update to database
+        artist.save()
+            .then((artist) => {
+                checkObjectExistsInDB(artist, response);
+                resolve();
+            })
+            .catch(error => {
+                handleError(error, response);
+                reject();
+            });
+    })
+}
+
 const _update = function(req, res, update){
     const artistId = req.params.artistId;
     //validate if provided artistId is valid document id
@@ -49,28 +66,12 @@ const _update = function(req, res, update){
         return;
     }
     
-    Artist.findById(artistId).exec()
-        .then(artist => {
-            if(artist === null){
-                response = createDbResponse();
-                sendResponse(res, response);
-            } else {
-                response = createResponse(process.env.UPDATE_SUCCESS_STATUS_CODE, artist);
-                update(req, artist);
-
-                //update to database
-                artist.save()
-                    .then(updatedArtist => response.message = updatedArtist)
-                    .catch(error => response = createErrorResponse(error))
-                    .finally(() => {
-                        sendResponse(res, response);
-                    });
-            }
-        })
-        .catch(error => {
-            response = createErrorResponse(error);
-            sendResponse(res, response);
-        });
+    response = createResponse();
+    Artist.findById(artistId)
+        .then((artist) => checkObjectExistsInDB(artist, response))
+        .then((artist) => _updateToDB(req, artist, response, update))
+        .catch((error) => handleError(error, response))
+        .finally(() => sendResponse(res, response));
 }
 
 const _runGeoSearchQuery = function(req, res, offset, count){
@@ -119,30 +120,27 @@ const _runGeoSearchQuery = function(req, res, offset, count){
     }
 
     let response = createResponse();
-
-    Artist.find(query).skip(offset).limit(count).exec()
-        .then(artists => response.message = artists)
-        .catch(err => response = createErrorResponse(err))
+    Artist.find(query).skip(offset).limit(count)
+        .then((artists) => checkObjectExistsInDB(artists, response))
+        .catch((error) => handleError(error, response))
         .finally(()=> sendResponse(res, response));
-
 }
 
 const getTotalCount = function(req, res) {
-    console.log("Get total count request received");
+    debugLog("Get total count request received");
 
     let response = createResponse();
     Artist.find().count()
-        .then(count => response.message = count )
-        .catch(err => response = createErrorResponse(err))
-        .finally(() => sendResponse(res, response));
-
+        .then((count) => checkObjectExistsInDB(count, response))
+        .catch((error) => handleError(error, response))
+        .finally(()=> sendResponse(res, response));
 };
 
 const getAll = function(req, res) {
-    console.log("Get all request received");
+    debugLog("Get all request received");
 
     //get value from environment variable
-    let offset=getInt(process.env.DEFAULT_OFFSET);
+    let offset= getInt(process.env.DEFAULT_OFFSET);
     let count= getInt(process.env.DEFAULT_COUNT);
     let maxCount = getInt(process.env.MAX_COUNT);
     let filter = {};
@@ -180,14 +178,14 @@ const getAll = function(req, res) {
     //initial response object
     let response = createResponse();
 
-    Artist.find(filter).skip(offset).limit(count).exec()
-        .then(artists => response.message = artists)
-        .catch(err => response = createErrorResponse(err))
+    Artist.find(filter).skip(offset).limit(count)
+        .then((artists) => checkObjectExistsInDB(artists, response))
+        .catch((error) => handleError(error, response))
         .finally(()=> sendResponse(res, response));
 }
 
 const getOne = function(req, res) {
-    console.log("GET One Received");
+    debugLog("GET one artist Received", req.params);
     const artistId = req.params.artistId;
 
     //validate if provided artistId is valid document id
@@ -198,20 +196,14 @@ const getOne = function(req, res) {
     }
 
     response = createResponse();
-    Artist.findById(artistId).exec()
-        .then(artist => {
-            if(artist === null){
-                response = createDbResponse();
-            } else {
-                response.message = artist
-            }
-        })
-        .catch(error => response = createErrorResponse(error))
+    Artist.findById(artistId)
+        .then((artists) => checkObjectExistsInDB(artists, response))
+        .catch((error) => handleError(error, response))
         .finally(()=> sendResponse(res, response));
 };
 
 const addOne = function(req, res) {
-    console.log("Add artist request received");
+    debugLog("Add artist request received");
     const newArtist = { 
         artistName,
         bornYear,
@@ -225,25 +217,24 @@ const addOne = function(req, res) {
 
     //initial response object
     let response = createResponse(process.env.CREATE_SUCCESS_STATUS_CODE);
-
     Artist.create(newArtist)
-        .then(artist => response.message = artist)
-        .catch(error => response = createErrorResponse(error))
+        .then((artists) => checkObjectExistsInDB(artists, response))
+        .catch((error) => handleError(error, response))
         .finally(() => sendResponse(res, response));
 };
 
 const fullUpdate = function(req, res) {
-    console.log("Update artist request received");
+    debugLog("Update artist request received");
     _update(req, res, _fullUpdate); 
 };
 
 const partialUpdate = function(req, res) {
-    console.log("Partial update artist request received");
+    debugLog("Partial update artist request received");
     _update(req, res, _partialUpdate); 
 };
 
 const deleteOne = function(req, res) {
-    console.log("Delete artist request received");
+    debugLog("Delete artist request received");
     const artistId = req.params.artistId;
 
     //validate if provided artistId is valid document id
@@ -254,16 +245,10 @@ const deleteOne = function(req, res) {
     }
 
     //initial response object
-    response = createResponse(process.env.CREATE_SUCCESS_STATUS_CODE);
-    Artist.findByIdAndDelete(artistId).exec()
-        .then(artist => {
-            if(artist === null){
-                response = createDbResponse();
-            } else {
-                response.message = artist
-            }
-        })
-        .catch(error => response = createErrorResponse(error))
+    response = createResponse(process.env.UPDATE_SUCCESS_STATUS_CODE);
+    Artist.findByIdAndDelete(artistId)
+        .then((artists) => checkObjectExistsInDB(artists, response))
+        .catch((error) => handleError(error, response))
         .finally(() => sendResponse(res, response));
 };
 
