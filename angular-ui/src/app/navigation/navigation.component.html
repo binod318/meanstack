@@ -2,7 +2,10 @@
     <button routerLink="/">Home</button>
     <button routerLink="/artists">Artists</button>
     <button routerLink="/search">Search</button>
-    <button routerLink="/artistform">Artist Form</button>
-    <button routerLink="/register">Register</button>
-    <button routerLink="/login">Login</button>
+    <button routerLink="/register" *ngIf="!isLoggedIn">Register</button>
+    <button routerLink="/profile" *ngIf="isLoggedIn">Profile</button>
+
+    <div class="login">
+        <app-login></app-login>
+    </div>
 </nav>

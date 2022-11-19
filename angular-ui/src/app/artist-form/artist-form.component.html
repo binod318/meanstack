@@ -1,23 +1,30 @@
+<div *ngIf="hasSuccess" class="alert alert-success">
+    <p>{{successMessage}}</p>
+</div>
+<div *ngIf="hasError" class="alert alert-danger">
+    <p>{{errorMessage}}</p>
+</div>
+
 <form #artistForm="ngForm" (ngSubmit)="onSubmit()">
     <div>
         <label>Name:</label>
-        <input name="artistName" ngModel/>
+        <input name="artistName" ngModel required/>
     </div>
     <div>
         <label>Born year:</label>
-        <input name="bornYear" ngModel/>
+        <input name="bornYear" ngModel required/>
     </div>
     <div>
         <label>Gender:</label>
-        <input name="gender" ngModel/>
+        <input name="gender" ngModel required/>
     </div>
     <div>
         <label>Nation:</label>
-        <input name="nation" ngModel/>
+        <input name="nation" ngModel required/>
     </div>
     <div>
         <label>First song:</label>
-        <input name="firstSong" ngModel/>
+        <input name="firstSong" ngModel required/>
     </div>
     <div>
         <label>Bands:</label>

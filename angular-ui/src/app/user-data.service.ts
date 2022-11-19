@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/internal/Observable';
+import { LoginToken } from './login/login.component';
 import { User } from './register/register.component';
 
 @Injectable({
@@ -16,8 +17,8 @@ export class UserDataService {
     return this._http.post<User>(url, user.ToJson());
   }
 
-  public login(user: User): Observable<User>{
+  public login(user: User): Observable<LoginToken>{
     const url = this._baseUrl + "/users/login";
-    return this._http.post<User>(url, user.ToJson());
+    return this._http.post<LoginToken>(url, user.ToJson());
   }
 }

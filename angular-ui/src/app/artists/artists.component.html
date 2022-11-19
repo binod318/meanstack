@@ -1,6 +1,7 @@
 
 <div class="artists">
-    <h3>Artists List</h3>
+    <h3>Artists List</h3> 
+    <button class="add-artist" routerLink="/artistform">Add artist</button>
     <ul>
         <li *ngFor="let artist of artists">
             <a routerLink="/artist/{{artist._id}}">

@@ -1,5 +1,6 @@
 const express = require('express');
 const artistController = require('../controllers/artistController');
+const authenticationController = require('../controllers/authenticationController');
 const router = express.Router();
 
 //routs for main document - artist
@@ -14,6 +15,6 @@ router.route("/:artistId")
    .get(artistController.getOne)
    .put(artistController.fullUpdate)
    .patch(artistController.partialUpdate)
-   .delete(artistController.deleteOne);
+   .delete(authenticationController.authenticate, artistController.deleteOne);
 
 module.exports = router;

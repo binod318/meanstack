@@ -11,6 +11,11 @@ import { Artist } from '../artists/artists.component';
 })
 export class ArtistFormComponent implements OnInit {
 
+  hasSuccess:boolean = false;
+  hasError:boolean = false;
+  successMessage!:string;
+  errorMessage!:string;
+
   artist!:Artist;
   artistId!:string;
 
@@ -40,34 +45,63 @@ export class ArtistFormComponent implements OnInit {
         this.artistForm.setValue(this.artist.ToJson());
       })
     } else {
-      this.artist = new Artist("", 0, "","",[""],"");
+      this.artist = new Artist("", "", "","","","");
       this.artistForm.setValue(this.artist.ToJson());
     }
   }
 
   onSubmit(){
-    const newArtist = new Artist(
-      this.artistForm.controls['artistName'].value,
-      this.artistForm.controls['bornYear'].value,
-      this.artistForm.controls['nation'].value,
-      this.artistForm.controls['gender'].value,
-      this.artistForm.controls['bands'].value,
-      this.artistForm.controls['firstSong'].value
-    );
 
-    //update
-    if(this.artistId){
-      newArtist._id = this.artistId;    
-      this._artistsService.updateArtist(newArtist).subscribe(() => {
-          this._router.navigate(["artists"]);
-      });
-    } else {
-      this._artistsService.addArtist(newArtist).subscribe(artist => {
-        //if the response has _id, it means add operation is successfull
-        if(artist._id){
-          this.initializeForm();
-        }
-      });
+    if(this.artistForm.valid){
+      const newArtist = new Artist(
+        this.artistForm.value.artistName,
+        this.artistForm.value.bornYear,
+        this.artistForm.value.nation,
+        this.artistForm.value.gender,
+        this.artistForm.value.bands,
+        this.artistForm.value.firstSong
+      );
+  
+      //update
+      if(this.artistId){
+        newArtist._id = this.artistId;    
+        this._artistsService.updateArtist(newArtist).subscribe({
+          next: () => {
+            this.hasSuccess = true;
+            this.hasError = false;
+            this.successMessage = "Artist updated successfully."
+          },
+          error: () => {
+            this.hasSuccess = false;
+            this.hasError = true;
+            this.errorMessage = "Failed to update artist!"
+          },
+          complete: () => {
+            setTimeout(() => {
+              this._router.navigate(["artists"]);
+            }, 2000);
+          }
+        });
+  
+      } else {
+        this._artistsService.addArtist(newArtist).subscribe({
+          next: () => {
+            this.hasSuccess = true;
+            this.hasError = false;
+            this.successMessage = "New artist added successfully."
+          },
+          error: () => {
+            this.hasSuccess = false;
+            this.hasError = true;
+            this.errorMessage = "Failed to add new artist!"
+          },
+          complete: () => {
+            setTimeout(() => {
+              this._router.navigate(["artists"]);
+            }, 2000);
+          }
+        });
+      }
     }
   }
 }

@@ -43,6 +43,11 @@ export class User {
       password: this.#password
     }
   }
+
+  reset(): void{
+    this.username = "";
+    this.password = "";
+  }
 }
 
 @Component({
@@ -67,10 +72,10 @@ export class RegisterComponent implements OnInit {
   }
 
   onSubmit(){
-    const user = new User(this.registrationForm.controls['name'].value, 
-                          this.registrationForm.controls['userName'].value, 
-                          this.registrationForm.controls['password'].value,
-                          this.registrationForm.controls['confirmPassword'].value);
+    const user = new User(this.registrationForm.value.name, 
+                          this.registrationForm.value.userName, 
+                          this.registrationForm.value.password,
+                          this.registrationForm.value.confirmPassword);
 
     this._userService.createUser(user).subscribe(user => {
       if(user._id)

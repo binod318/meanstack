@@ -5,3 +5,7 @@ nav {
 nav > button {
     margin: 2px;
 }
+
+.login {
+    float: right;
+}

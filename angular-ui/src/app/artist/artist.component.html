@@ -1,5 +1,12 @@
 <h1>{{artist.artistName}}</h1> <br/>
 
+<div *ngIf="hasSuccess" class="alert alert-success">
+    <p>{{successMessage}}</p>
+</div>
+<div *ngIf="hasError" class="alert alert-danger">
+    <p>{{errorMessage}}</p>
+</div>
+
 BornYear: {{artist.bornYear}} <br/>
 Gender: {{artist.gender}} <br/>
 Nation: {{artist.nation}} <br/>
@@ -10,3 +17,5 @@ Bands:
 <ul>
     <li *ngFor="let band of artist.bands">{{band}}</li>
 </ul>
+
+<button (click)="deleteArtist()" *ngIf="isLoggedIn">delete</button>
