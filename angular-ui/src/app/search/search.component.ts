@@ -1,40 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { RoutesConfig } from 'src/config/routes-config';
+import { environment } from 'src/environments/environment';
 import { ArtistsDataService } from '../artists-data.service';
-import { Artist } from '../artists/artists.component';
-
-export class Filter {
-  #offset!:number;
-  #count!: number;
-  #search!: string;
-  #latitude!: string;
-  #longitude!: string;
-  #minDist!:string;
-  #maxDist!:string;
-
-  constructor(offset:number, count:number, search:string, latitude:string, longitude:string, minDist:string, maxDist:string){
-    this.#offset = offset;
-    this.#count = count;
-    this.#search = search;
-    this.#latitude = latitude;
-    this.#longitude = longitude;
-    this.#minDist = minDist;
-    this.#maxDist = maxDist;
-  }
-
-  toQueryString(){
-    let query = this.#offset ? `offset=${this.#offset}` : '';
-    query = this.#count ? (query ? `${query}&` : '') + `count=${this.#count}` : query; 
-
-    query = this.#search ? (query ? `${query}&` : '') + `search=${this.#search}` : query; 
-    query = this.#latitude ? (query ? `${query}&` : '') + `latitude=${this.#latitude}` : query; 
-    query = this.#longitude ? (query ? `${query}&` : '') + `longitude=${this.#longitude}` : query; 
-    query = this.#minDist ? (query ? `${query}&` : '') + `minDist=${this.#minDist}` : query; 
-    query = this.#maxDist ? (query ? `${query}&` : '') + `maxDist=${this.#maxDist}` : query; 
-
-    query = query ? ("?" + query) : '';
-    return query;
-  }
-}
+import { Artist } from '../models/artist';
+import { Filter } from '../models/filter';
 
 @Component({
   selector: 'app-search',
@@ -53,6 +22,25 @@ export class SearchComponent implements OnInit {
   maxDistance!:string;
 
   artists:Artist[] = [];
+
+  //labels
+  artist_label:string = environment.artist_label;
+  name_label:string = environment.name_label;
+  search_label:string = environment.search_label;
+  by_label:string = environment.by_label;
+  for_label:string = environment.for_label;
+  latitude_label:string = environment.latitude_label;
+  longitude_label:string = environment.longitude_label;
+  minimum_label:string = environment.minimum_label;
+  maximum_label:string = environment.maximum_label;
+  distance_label:string = environment.distance_label;
+  geoSearch_label:string = environment.geoSearch_label;
+
+  edit_label:string = environment.edit_label;
+  delete_label:string = environment.delete_label;
+
+  editArtistRoute:string = RoutesConfig.editArtistRoute;
+  artistDetailRoute:string = RoutesConfig.artistDetailRoute;
 
   constructor(private _artistsService:ArtistsDataService) { }
 

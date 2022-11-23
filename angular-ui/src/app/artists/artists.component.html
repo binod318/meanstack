@@ -1,38 +1,36 @@
 
 <div class="artists">
-    <h3>Artists List</h3> 
-    <button class="add-artist" routerLink="/artistform">Add artist</button>
+    <h3>{{artists_label}} {{list_label}}</h3> 
+    <button class="add-artist" routerLink="/{{addArtistRoute}}">{{addButtonText}} {{artist_label | lowercase}}</button>
     <ul>
         <li *ngFor="let artist of artists">
-            <a routerLink="/artist/{{artist._id}}">
+            <a routerLink="/{{artistDetailRoute}}{{artist._id}}">
                 {{artist.artistName}}
             </a>
 
-            <a class="space-added" routerLink="/artistform/{{artist._id}}">
-                edit
+            <a class="space-added" routerLink="/{{editArtistRoute}}{{artist._id}}">
+                {{edit_label | lowercase}}
             </a>
 
             <a class="space-added" (click)="onDelete(artist._id)">
-                delete
+                {{delete_label | lowercase}}
             </a>
         </li>
     </ul>
 
     <br/>
     <div>
-        Displaying total
+        {{display_total_label}}
         <select class="page-size" [(ngModel)]="pageSize" (ngModelChange)="onPageSizeChange($event)">
-            <option value="5">5</option>
-            <option value="10">10</option>
-            <option value="20">20</option>
+            <option *ngFor="let size of pageSizeList" value="{{size}}">{{size}}</option>
         </select>
-        records of 
+        {{records_label}} {{of_label}}
         <input class="total" [disabled]="true" value="{{total}}"/>
     </div>
     <div class="pagination">
-        <button (click)="onPrevious()" [disabled]="pageNumber===1">Previous</button>
-        <label>Page: {{pageNumber}}</label>
-        <button (click)="onNext()" [disabled]="disableNext">Next</button>
+        <button (click)="onPrevious()" [disabled]="pageNumber===1">{{previousButtonText}}</button>
+        <label>{{page_label}}: {{pageNumber}}</label>
+        <button (click)="onNext()" [disabled]="disableNext">{{nextButtonText}}</button>
     </div>
 
 </div>

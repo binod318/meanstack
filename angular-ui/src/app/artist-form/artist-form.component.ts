@@ -1,8 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { RoutesConfig } from 'src/config/routes-config';
+import { environment } from 'src/environments/environment';
 import { ArtistsDataService } from '../artists-data.service';
-import { Artist } from '../artists/artists.component';
+import { Artist } from '../models/artist';
 
 @Component({
   selector: 'app-artist-form',
@@ -23,6 +25,17 @@ export class ArtistFormComponent implements OnInit {
   @ViewChild('artistForm')
   artistForm!:NgForm;
 
+  addButtonText:string = environment.add_label;
+  updateButtonText:string = environment.update_label;
+
+  //labels
+  nameLabel:string = environment.name_label;
+  bornYearLabel:string = environment.bornYear_label;
+  genderLabel:string = environment.gender_label;
+  nationLabel:string = environment.nation_label;
+  firstSongLabel:string = environment.firstSong_label;
+  bandsLabel:string = environment.bands_label;
+
   constructor(private _artistsService:ArtistsDataService, 
               private _route:ActivatedRoute,
               private _router:Router) { }
@@ -36,7 +49,7 @@ export class ArtistFormComponent implements OnInit {
   }
 
   initializeForm(){
-    this.artistId = this._route.snapshot.params['artistId'];
+    this.artistId = this._route.snapshot.params[environment.artist_id];
 
     //if artistId is passed in params then this form should work as edit form
     if(this.artistId){
@@ -69,35 +82,34 @@ export class ArtistFormComponent implements OnInit {
           next: () => {
             this.hasSuccess = true;
             this.hasError = false;
-            this.successMessage = "Artist updated successfully."
+            this.successMessage = environment.artist_update_success_message;
           },
           error: () => {
             this.hasSuccess = false;
             this.hasError = true;
-            this.errorMessage = "Failed to update artist!"
+            this.errorMessage = environment.artist_update_fail_message;
           },
           complete: () => {
             setTimeout(() => {
-              this._router.navigate(["artists"]);
+              this._router.navigate([RoutesConfig.artistsRoute]);
             }, 2000);
           }
         });
-  
       } else {
         this._artistsService.addArtist(newArtist).subscribe({
           next: () => {
             this.hasSuccess = true;
             this.hasError = false;
-            this.successMessage = "New artist added successfully."
+            this.successMessage = environment.artist_add_success_message;
           },
           error: () => {
             this.hasSuccess = false;
             this.hasError = true;
-            this.errorMessage = "Failed to add new artist!"
+            this.errorMessage = environment.artist_add_fail_message;
           },
           complete: () => {
             setTimeout(() => {
-              this._router.navigate(["artists"]);
+              this._router.navigate([RoutesConfig.artistsRoute]);
             }, 2000);
           }
         });

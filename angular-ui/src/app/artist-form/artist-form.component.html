@@ -7,31 +7,31 @@
 
 <form #artistForm="ngForm" (ngSubmit)="onSubmit()">
     <div>
-        <label>Name:</label>
+        <label>{{nameLabel}}:</label>
         <input name="artistName" ngModel required/>
     </div>
     <div>
-        <label>Born year:</label>
+        <label>{{bornYearLabel}}:</label>
         <input name="bornYear" ngModel required/>
     </div>
     <div>
-        <label>Gender:</label>
+        <label>{{genderLabel}}:</label>
         <input name="gender" ngModel required/>
     </div>
     <div>
-        <label>Nation:</label>
+        <label>{{nationLabel}}:</label>
         <input name="nation" ngModel required/>
     </div>
     <div>
-        <label>First song:</label>
+        <label>{{firstSongLabel}}:</label>
         <input name="firstSong" ngModel required/>
     </div>
     <div>
-        <label>Bands:</label>
+        <label>{{bandsLabel}}:</label>
         <input name="bands" ngModel/>
     </div>
     <div>
-        <input type="submit" value="Add" *ngIf="!this.artistId"/>
-        <input type="submit" value="Update" *ngIf="this.artistId"/>
+        <input type="submit" value="{{addButtonText}}" *ngIf="!this.artistId"/>
+        <input type="submit" value="{{updateButtonText}}" *ngIf="this.artistId"/>
     </div>
 </form>

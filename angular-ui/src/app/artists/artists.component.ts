@@ -1,60 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { RoutesConfig } from 'src/config/routes-config';
+import { environment } from 'src/environments/environment';
 import { ArtistsDataService } from '../artists-data.service';
-import { Filter } from '../search/search.component';
-
-export class Artist {
-  #_id!:string;
-  #artistName!:string;
-  #bornYear!:string;
-  #nation!:string;
-  #gender!:string;
-  #bands!:string;
-  #firstSong!:string;
-
-  get _id() { return this.#_id; }
-  set _id(_id: string) { this.#_id = _id; }
-  get artistName() { return this.#artistName; }
-  set artistName(artistName: string) { this.#artistName = artistName; }
-  get bornYear() { return this.#bornYear; }
-  set bornYear(bornYear: string) { this.#bornYear = bornYear; }
-  get nation() { return this.#nation; }
-  set nation(nation: string) { this.#nation = nation; }
-  get gender() { return this.#gender; }
-  set gender(gender: string) { this.#gender = gender; }
-  get bands() { return this.#bands; }
-  set bands(bands: string) { this.#bands = bands; }
-  get firstSong() { return this.#firstSong; }
-  set firstSong(firstSong: string) { this.#firstSong = firstSong; }
-
-  constructor(
-    artistName:string,
-    bornYear:string,
-    nation:string,
-    gender:string,
-    bands:string,
-    firstSong:string
-  ){
-      this.#artistName = artistName;
-      this.#bornYear = bornYear;
-      this.#nation = nation;
-      this.#gender = gender;
-      this.#bands = bands;
-      this.#firstSong = firstSong;
-  }
-
-  ToJson(){
-    return {
-      artistName: this.#artistName,
-      bornYear: this.#bornYear,
-      nation: this.#nation,
-      gender: this.#gender,
-      bands: this.#bands,
-      firstSong: this.#firstSong
-    }
-  }
-}
-
-
+import { Artist } from '../models/artist';
+import { Filter } from '../models/filter';
 
 @Component({
   selector: 'app-artists',
@@ -64,11 +13,29 @@ export class Artist {
 export class ArtistsComponent implements OnInit {
   artists: Artist[] = [];
   total!:number;
-  countList: number[] = [];
   disableNext: boolean = false;
 
-  pageSize:number = 5;
+  pageSize:number = environment.defaultPageSize;
   pageNumber: number = 1;
+  pageSizeList:number[] = [];
+
+  addArtistRoute:string = RoutesConfig.addArtistRoute;
+  editArtistRoute:string = RoutesConfig.editArtistRoute;
+  artistDetailRoute:string = RoutesConfig.artistDetailRoute;
+
+  //labels
+  addButtonText:string = environment.add_label;
+  nextButtonText:string = environment.next_label;
+  previousButtonText:string = environment.previous_label;
+  artists_label:string = environment.artists_label;
+  artist_label:string = environment.artist_label;
+  display_total_label:string = environment.display_total_label;
+  records_label:string = environment.records_label;
+  of_label:string = environment.of_label;
+  page_label:string = environment.page_label;
+  edit_label:string = environment.edit_label;
+  delete_label:string = environment.delete_label;
+  list_label:string = environment.list_label;
 
   constructor(private _artistsService:ArtistsDataService) { }
 
@@ -88,8 +55,9 @@ export class ArtistsComponent implements OnInit {
     this._artistsService.getTotalCount().subscribe(total => {
       this.total = total;
 
-      for(let i = 0; i< total; i++){
-        this.countList.push(i+1);
+      //create pageSize
+      for(let i = 1; i <= Math.ceil(total / this.pageSize); i++){
+        this.pageSizeList.push(this.pageSize * i);
       }
     });
   }

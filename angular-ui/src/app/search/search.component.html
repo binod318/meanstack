@@ -1,33 +1,33 @@
 <div class="search-page">
-    <h3>Search</h3>
+    <h3>{{search_label}}</h3>
 
     <div class="search-area">
-        <label>Artist name:</label>
-        <input [(ngModel)]="searchName" placeholder="Search by artist name:" (keyup.enter)="onKeyEnter()"/>
-        <label>Latitude:</label>
-        <input [(ngModel)]="searchLatitude" placeholder="Search by latitude" (keyup.enter)="onKeyEnter()"/>
-        <label>Longitude:</label>
-        <input [(ngModel)]="searchLongitude" placeholder="Search by longitude:" (keyup.enter)="onKeyEnter()"/>
-        <label>Minimum Distance:</label>
-        <input [(ngModel)]="minDistance" placeholder="Min Distance for Geo Search" (keyup.enter)="onKeyEnter()"/>
-        <label>Maximum Distance:</label>
-        <input [(ngModel)]="maxDistance" placeholder="Min Distance for Geo Search" (keyup.enter)="onKeyEnter()"/>
-        <button (click)="onKeyEnter()">Search</button>
+        <label>{{artist_label}} {{name_label | lowercase}}:</label>
+        <input [(ngModel)]="searchName" placeholder="{{search_label | lowercase}} {{by_label}} {{artist_label | lowercase}} {{name_label | lowercase}}:" (keyup.enter)="onKeyEnter()"/>
+        <label>{{latitude_label}}:</label>
+        <input [(ngModel)]="searchLatitude" placeholder="{{search_label | lowercase}} {{by_label}} {{latitude_label | lowercase}}" (keyup.enter)="onKeyEnter()"/>
+        <label>{{longitude_label}}:</label>
+        <input [(ngModel)]="searchLongitude" placeholder="{{search_label | lowercase}} {{by_label}} {{longitude_label | lowercase}}:" (keyup.enter)="onKeyEnter()"/>
+        <label>{{minimum_label}} {{distance_label | lowercase}}:</label>
+        <input [(ngModel)]="minDistance" placeholder="{{minimum_label | lowercase}} {{distance_label | lowercase}} {{for_label}} {{geoSearch_label | lowercase}}" (keyup.enter)="onKeyEnter()"/>
+        <label>{{maximum_label}} {{distance_label | lowercase}}:</label>
+        <input [(ngModel)]="maxDistance" placeholder="{{maximum_label | lowercase}} {{distance_label | lowercase}} {{for_label}} {{geoSearch_label | lowercase}}" (keyup.enter)="onKeyEnter()"/>
+        <button (click)="onKeyEnter()">{{search_label}}</button>
     </div>
 
     <div>
         <ul>
             <li *ngFor="let artist of artists">
-                <a routerLink="/artist/{{artist._id}}">
+                <a routerLink="/{{artistDetailRoute}}{{artist._id}}">
                     {{artist.artistName}}
                 </a>
     
-                <a class="space-added" routerLink="/artistform/{{artist._id}}">
-                    edit
+                <a class="space-added" routerLink="/{{editArtistRoute}}{{artist._id}}">
+                    {{edit_label}}
                 </a>
     
                 <a class="space-added" (click)="onDelete(artist._id)">
-                    delete
+                    {{delete_label}}
                 </a>
             </li>
         </ul>

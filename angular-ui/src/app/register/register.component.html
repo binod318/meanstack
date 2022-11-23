@@ -1,22 +1,29 @@
+<div *ngIf="hasSuccess" class="alert alert-success">
+    <p>{{successMessage}}</p>
+</div>
+<div *ngIf="hasError" class="alert alert-danger">
+    <p>{{errorMessage}}</p>
+</div>
+
 <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()">
     <div>
-        <label>Name: </label>
-        <input formControlName="name" placeholder="Your name"/>
+        <label>{{name_label}}: </label>
+        <input formControlName="name" placeholder="{{name_label | lowercase}}"/>
     </div>
     <div>
-        <label>Username: </label>
-        <input formControlName="userName" placeholder="Username"/>
+        <label>{{username_label}}: </label>
+        <input formControlName="userName" placeholder="{{username_label | lowercase}}"/>
     </div>
     <div>
-        <label>Password: </label>
-        <input formControlName="password" type="password" placeholder="Password"/>
+        <label>{{password_label}}: </label>
+        <input formControlName="password" type="password" placeholder="{{password_label | lowercase}}"/>
     </div>
     <div>
-        <label>Confirm password: </label>
-        <input formControlName="confirmPassword" type="password" placeholder="Confirm password"/>
+        <label>{{confirm_label}} {{password_label}}: </label>
+        <input formControlName="confirmPassword" type="password" placeholder="{{confirm_label | lowercase}} {{password_label | lowercase}}"/>
     </div>
     <div>
-        <input type="submit" value="Register"/>
-        <input type="reset" value="Reset"/>
+        <input type="submit" value="{{register_label}}"/>
+        <input type="reset" value="{{reset_label}}"/>
     </div>
 </form>

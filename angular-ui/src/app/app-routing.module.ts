@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { RoutesConfig } from 'src/config/routes-config';
 import { ArtistFormComponent } from './artist-form/artist-form.component';
 import { ArtistComponent } from './artist/artist.component';
 import { ArtistsComponent } from './artists/artists.component';
@@ -12,43 +13,43 @@ import { SearchComponent } from './search/search.component';
 
 const routes: Routes = [
   {
-    path: '',
+    path: RoutesConfig.homeRoute,
     component: HomeComponent
   },
   {
-    path: 'artists',
+    path: RoutesConfig.artistsRoute,
     component: ArtistsComponent
   },
   {
-    path: 'search',
+    path: RoutesConfig.searchRoute,
     component: SearchComponent
   },
   {
-    path: 'artist/:artistId',
+    path: RoutesConfig.artistDetailPath,
     component: ArtistComponent
   },
   {
-    path: 'register',
+    path: RoutesConfig.registerRoute,
     component: RegisterComponent
   },
   {
-    path: 'profile',
+    path: RoutesConfig.profileRoute,
     component: ProfileComponent
   },
   {
-    path: 'artistform',
+    path: RoutesConfig.addArtistRoute,
     component: ArtistFormComponent
   },
   {
-    path: 'artistform/:artistId',
+    path: RoutesConfig.editArtistPath,
     component: ArtistFormComponent
   },
   {
-    path: 'login',
+    path: RoutesConfig.loginRoute,
     component: LoginComponent
   },
   {
-    path: '**',
+    path: RoutesConfig.errorRoute,
     component: ErrorPageComponent
   }
 ];

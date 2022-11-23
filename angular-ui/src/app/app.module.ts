@@ -17,7 +17,7 @@ import { ArtistComponent } from './artist/artist.component';
 import { ArtistFormComponent } from './artist-form/artist-form.component';
 import { LoginComponent } from './login/login.component';
 import { SearchComponent } from './search/search.component';
-import { httpInterceptorProviders } from './http-interceptors';
+import { httpInterceptorProviders } from './services/http-interceptors';
 import { ProfileComponent } from './profile/profile.component';
 
 @NgModule({

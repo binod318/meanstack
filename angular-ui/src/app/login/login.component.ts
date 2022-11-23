@@ -1,13 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { environment } from 'src/environments/environment';
 import { AuthenticationService } from '../authentication.service';
-import { User } from '../register/register.component';
+import { User } from '../models/user';
 import { UserDataService } from '../user-data.service';
-
-export class LoginToken {
-  success:boolean = false;
-  token:string = "";
-}
 
 @Component({
   selector: 'app-login',
@@ -22,6 +18,12 @@ export class LoginComponent implements OnInit {
 
   username!:string;
   user!: User;
+
+  greeting_label:string = environment.greeting_label;
+  login_label:string = environment.login_label;
+  logout_label:string = environment.logout_label;
+  username_label:string = environment.username_label;
+  password_label:string = environment.password_label;
 
   @ViewChild('loginForm')
   loginForm!: NgForm;
@@ -52,7 +54,7 @@ export class LoginComponent implements OnInit {
   }
 
   _removeToken(){
-    localStorage.removeItem("token");
+    localStorage.removeItem(environment.token_key);
   }
 
   logout(){

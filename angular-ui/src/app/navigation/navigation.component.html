@@ -1,9 +1,9 @@
 <nav>
-    <button routerLink="/">Home</button>
-    <button routerLink="/artists">Artists</button>
-    <button routerLink="/search">Search</button>
-    <button routerLink="/register" *ngIf="!isLoggedIn">Register</button>
-    <button routerLink="/profile" *ngIf="isLoggedIn">Profile</button>
+    <button routerLink="/{{homeRoute}}">{{home_label}}</button>
+    <button routerLink="/{{artistsRoute}}">{{artists_label}}</button>
+    <button routerLink="/{{searchRoute}}">{{search_label}}</button>
+    <button routerLink="/{{registerRoute}}" *ngIf="!isLoggedIn">{{register_label}}</button>
+    <button routerLink="/{{profileRoute}}" *ngIf="isLoggedIn">{{profile_label}}</button>
 
     <div class="login">
         <app-login></app-login>
