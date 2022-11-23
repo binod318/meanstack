@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-const { getInt, debugLog } = require('../utilities');
+const { getInt, debugLog, getEnv } = require('../utilities');
 const {
     handleError,
     checkObjectExistsInDB,
@@ -12,11 +12,40 @@ const {
     validateObjectId
 } = require('./baseController');
 
-const User = mongoose.model(process.env.USER_MODEL);
+const User = mongoose.model(getEnv('USER_MODEL'));
 
 const getAll = function(req, res){
+    //get value from environment variable
+    let offset= getInt(getEnv('DEFAULT_OFFSET'));
+    let count= getInt(getEnv('DEFAULT_COUNT'));
+    let maxCount = getInt(getEnv('MAX_COUNT'));
+
+    //check query string parameters
+    if(req.query && req.query.offset){
+        offset = getInt(req.query.offset);
+    }
+    if(req.query && req.query.count){
+        count = getInt(req.query.count);
+    }
+
+    // type check of the variables to be used
+    if(isNaN(offset) || isNaN(count)){
+        const response = createResponse(getEnv('CLIENT_ERROR_STATUS_CODE'), getEnv('PARAMETER_TYPE_ERROR_MESSAGE'));
+        sendResponse(res, response);
+        return;
+    }
+
+    //limit check
+    if(count > maxCount){
+        const response = createResponse(getEnv('CLIENT_ERROR_STATUS_CODE'), getEnv('LIMIT_EXCEED_MESSAGE'));
+        sendResponse(res, response);
+        return;
+    }
+
     let response = createResponse();
     User.find()
+        .skip(offset)
+        .limit(count)
         .then((users) => checkObjectExistsInDB(users, response))
         .catch((error) => handleError(error, response))
         .finally(() => sendResponse(res, response));
@@ -42,9 +71,9 @@ const getOne = function(req, res){
 const _checkSaltExists = function(salt, response){
     return new Promise((resolve, reject) => {
         if(!salt){
-            debugLog("DB object doesn't exists");
-            response.status = process.env.SERVER_ERROR_STATUS_CODE; 
-            response.message = process.env.SALT_GENERATE_ISSUE_MESSAGE;
+            debugLog("Salt object doesn't exists");
+            response.status = getEnv('SERVER_ERROR_STATUS_CODE'); 
+            response.message = getEnv('SALT_GENERATE_ISSUE_MESSAGE');
             reject();
         } else {
             resolve(salt);
@@ -56,8 +85,8 @@ const _checkPasswordHash = function(passwordHash, req, response){
 
     return new Promise((resolve, reject) => {
         if(!passwordHash){
-            response.status = process.env.SERVER_ERROR_STATUS_CODE;
-            response.message = process.env.SALT_GENERATE_ISSUE_MESSAGE;
+            response.status = getEnv('SERVER_ERROR_STATUS_CODE');
+            response.message = getEnv('SALT_GENERATE_ISSUE_MESSAGE');
             reject();
         } else {
             const newUser = {
@@ -101,15 +130,15 @@ const addUser = function(req, res){
     if the value is sent empty from UI
     */
     if(req.body && !req.body.password){
-        const response = createResponse(process.env.CLIENT_ERROR_STATUS_CODE, process.env.PASSWORD_EMPTY_MESSAGE);
+        const response = createResponse(getEnv('CLIENT_ERROR_STATUS_CODE'), getEnv('PASSWORD_EMPTY_MESSAGE'));
         sendResponse(res, response);
         return;
     }
 
     //this is the variable to increase the complexity of the hasing algorithm
-    const saltRound = getInt(process.env.SALT_NUMBER_OF_ROUNDS);
+    const saltRound = getInt(getEnv('SALT_NUMBER_OF_ROUNDS'));
 
-    let response = createResponse(process.env.CREATE_SUCCESS_STATUS_CODE);
+    let response = createResponse(getEnv('REATE_SUCCESS_STATUS_CODE'));
     bcrypt.genSalt(saltRound)
         .then((salt) => _checkSaltExists(salt, response))
         .then((salt) => _createPasswordHash(salt, req, response))
@@ -128,7 +157,7 @@ const deleteOne = function(req, res) {
         return;
     }
 
-    response = createResponse(process.env.UPDATE_SUCCESS_STATUS_CODE);
+    response = createResponse(getEnv('UPDATE_SUCCESS_STATUS_CODE'));
     User.findByIdAndDelete(userId)
         .then((user) => checkObjectExistsInDB(user, response))
         .catch((error) => handleError(error, response))
@@ -145,7 +174,7 @@ const loginSync = function(req, res){
     User.findOne(user).exec()
         .then(user => {
             if(!user){
-                response = createResponse(process.env.FILE_NOT_FOUND_STATUS_CODE, process.env.INVALID_CREDENTIAL_MESSAGE);
+                response = createResponse(getEnv('FILE_NOT_FOUND_STATUS_CODE'), getEnv('INVALID_CREDENTIAL_MESSAGE'));
                 sendResponse(res, response);
             } else {
                 //compare
@@ -153,7 +182,7 @@ const loginSync = function(req, res){
                 if(passwordMatch){
                     response.message= user;
                 } else {
-                    response = createResponse(process.env.FILE_NOT_FOUND_STATUS_CODE, process.env.INVLAID_CREDENTIAL_MESSAGE);
+                    response = createResponse(getEnv('FILE_NOT_FOUND_STATUS_CODE'), getEnv('INVLAID_CREDENTIAL_MESSAGE'));
                 }
             }
         })
@@ -169,8 +198,8 @@ const _checkPassword = function(password, user, response){
                 if(passwordMatch){
                     resolve(user);
                 } else {
-                    response.status = process.env.FILE_NOT_FOUND_STATUS_CODE;
-                    response.message = process.env.INVALID_CREDENTIAL_MESSAGE;
+                    response.status = getEnv('FILE_NOT_FOUND_STATUS_CODE');
+                    response.message = getEnv('INVALID_CREDENTIAL_MESSAGE');
                     reject();
                 }
             })
@@ -183,7 +212,7 @@ const _checkPassword = function(password, user, response){
 
 const _generateToken = function(user, response){
     debugLog("generate token");
-    const token = jwt.sign({name: user.name}, process.env.JWT_PASSWORD, {expiresIn: 3600} );
+    const token = jwt.sign({name: user.name}, getEnv('JWT_PASSWORD'), {expiresIn: getInt(getEnv('JWT_EXPIRY_IN_SECOND'))} );
     response.message = { success: true, token: token };
 }
 

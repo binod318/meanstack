@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { getInt, debugLog } = require('../utilities');
+const { getNumberBase, getInt, debugLog, getEnv } = require('../utilities');
 const {
     handleError,
     checkObjectExistsInDB,
@@ -8,7 +8,7 @@ const {
     validateObjectId
 } = require('./baseController');
 
-const Artist = mongoose.model(process.env.ARTIST_MODEL);
+const Artist = mongoose.model(getEnv('ARTIST_MODEL'));
 
 const _fullUpdate = function(req, artist){
     artist.artistName   = req.body.artistName     
@@ -76,22 +76,22 @@ const _update = function(req, res, update){
 
 const _runGeoSearchQuery = function(req, res, offset, count){
 
-    let minDistance = parseFloat(process.env.GEO_SEARCH_DEFAULT_MIN_DISTANCE, process.env.NUMBER_BASE);
+    let minDistance = parseFloat(getEnv('GEO_SEARCH_DEFAULT_MIN_DISTANCE'), getNumberBase());
     if(req.query && req.query.minDist){
-        minDistance = parseFloat(req.query.minDist, process.env.NUMBER_BASE);
+        minDistance = parseFloat(req.query.minDist, getNumberBase());
     }
 
-    let maxDistance = parseFloat(process.env.GEO_SEARCH_DEFAULT_MAX_DISTANCE, process.env.NUMBER_BASE);
+    let maxDistance = parseFloat(getEnv('GEO_SEARCH_DEFAULT_MAX_DISTANCE'), getNumberBase());
     if(req.query && req.query.maxDist){
-        maxDistance = parseFloat(req.query.maxDist, process.env.NUMBER_BASE);
+        maxDistance = parseFloat(req.query.maxDist, getNumberBase());
     }
 
-    const lng = parseFloat(req.query.lng, process.env.NUMBER_BASE);
-    const lat = parseFloat(req.query.lat, process.env.NUMBER_BASE);
+    const lng = parseFloat(req.query.lng, getNumberBase());
+    const lat = parseFloat(req.query.lat, getNumberBase());
 
     // type check of the variables to be used
     if(isNaN(minDistance) || isNaN(maxDistance) || isNaN(lng) || isNaN(lat)){
-        const response = createResponse(process.env.CLIENT_ERROR_STATUS_CODE, process.env.PARAMETER_TYPE_ERROR_MESSAGE);
+        const response = createResponse(getEnv('CLIENT_ERROR_STATUS_CODE'), getEnv('PARAMETER_TYPE_ERROR_MESSAGE'));
         sendResponse(res, response);
         return;
     }
@@ -140,9 +140,9 @@ const getAll = function(req, res) {
     debugLog("Get all request received");
 
     //get value from environment variable
-    let offset= getInt(process.env.DEFAULT_OFFSET);
-    let count= getInt(process.env.DEFAULT_COUNT);
-    let maxCount = getInt(process.env.MAX_COUNT);
+    let offset= getInt(getEnv('DEFAULT_OFFSET'));
+    let count= getInt(getEnv('DEFAULT_COUNT'));
+    let maxCount = getInt(getEnv('MAX_COUNT'));
     let filter = {};
 
     //check query string parameters
@@ -158,18 +158,19 @@ const getAll = function(req, res) {
 
     // type check of the variables to be used
     if(isNaN(offset) || isNaN(count)){
-        const response = createResponse(process.env.CLIENT_ERROR_STATUS_CODE, process.env.PARAMETER_TYPE_ERROR_MESSAGE);
+        const response = createResponse(getEnv('CLIENT_ERROR_STATUS_CODE'), getEnv('PARAMETER_TYPE_ERROR_MESSAGE'));
         sendResponse(res, response);
         return;
     }
 
     //limit check
     if(count > maxCount){
-        const response = createResponse(process.env.CLIENT_ERROR_STATUS_CODE, process.env.LIMIT_EXCEED_MESSAGE);
+        const response = createResponse(getEnv('CLIENT_ERROR_STATUS_CODE'), getEnv('LIMIT_EXCEED_MESSAGE'));
         sendResponse(res, response);
         return;
     }
 
+    //handle geo search query on different method
     if(req.query && req.query.lat && req.query.lng){
         _runGeoSearchQuery(req, res, offset, count);
         return;
@@ -178,6 +179,7 @@ const getAll = function(req, res) {
     //initial response object
     let response = createResponse();
 
+    //chained promise with named function can give the flat structure
     Artist.find(filter).skip(offset).limit(count)
         .then((artists) => checkObjectExistsInDB(artists, response))
         .catch((error) => handleError(error, response))
@@ -216,7 +218,7 @@ const addOne = function(req, res) {
     } = req.body;
 
     //initial response object
-    let response = createResponse(process.env.CREATE_SUCCESS_STATUS_CODE);
+    let response = createResponse(getEnv('CREATE_SUCCESS_STATUS_CODE'));
     Artist.create(newArtist)
         .then((artists) => checkObjectExistsInDB(artists, response))
         .catch((error) => handleError(error, response))
@@ -245,7 +247,7 @@ const deleteOne = function(req, res) {
     }
 
     //initial response object
-    response = createResponse(process.env.UPDATE_SUCCESS_STATUS_CODE);
+    response = createResponse(getEnv('UPDATE_SUCCESS_STATUS_CODE'));
     Artist.findByIdAndDelete(artistId)
         .then((artists) => checkObjectExistsInDB(artists, response))
         .catch((error) => handleError(error, response))

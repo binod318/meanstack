@@ -1,10 +1,11 @@
 const express = require('express');
+const { getEnv } = require('./utilities');
 require('dotenv').config();
 require('./data/db')
 const routes = require('./routes');
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = getEnv('PORT');
 
 //for FORM data POST processing
 app.use(express.json());
@@ -19,12 +20,12 @@ app.use("/api", (req, res, next) => {
     next();
 })
 
-app.use(express.static('public'));    
+app.use(express.static(getEnv('PUBLIC_FOLDER')));    
 
 app.use('/api', routes);
 
 const server = app.listen(port, function() {    
-    console.log(process.env.SERVER_LISTEN_MESSAGE, server.address().port);
+    console.log(getEnv('SERVER_LISTEN_MESSAGE'), server.address().port);
 })
 
 

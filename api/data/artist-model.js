@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const songSchema = require('./song-model');
+const { getEnv } = require('../utilities');
 
 const addressSchema = mongoose.Schema({
     coordinates: [Number]
@@ -29,4 +30,4 @@ const artistSchema = mongoose.Schema({
     songs: [songSchema]
 });
 
-mongoose.model(process.env.ARTIST_MODEL, artistSchema, process.env.ARTISTS_COLLECTION);
+mongoose.model(getEnv('ARTIST_MODEL'), artistSchema, getEnv('ARTISTS_COLLECTION'));

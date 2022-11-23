@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { getInt, debugLog } = require('../utilities');
+const { getInt, debugLog, getEnv } = require('../utilities');
 const {
     handleError,
     checkObjectExistsInDB,
@@ -8,7 +8,7 @@ const {
     validateObjectId
 } = require('./baseController');
 
-const Artist = mongoose.model(process.env.ARTIST_MODEL);
+const Artist = mongoose.model(getEnv('ARTIST_MODEL'));
 
 const _updateToDB = function(artist, response){
 
@@ -57,8 +57,8 @@ const _handleUpdate = function(req, artist, songId, response, update){
 
     //check if song exists for given id
     if(selectedSong === null){
-        response.status = process.env.SERVER_ERROR_STATUS_CODE;
-        response.message = process.env.INVALID_SONG_MESSAGE + songId;
+        response.status = getEnv('SERVER_ERROR_STATUS_CODE');
+        response.message = getEnv('INVALID_SONG_MESSAGE') + songId;
     } else {
         update(req, selectedSong);
         _updateToDB(artist, response);
@@ -83,7 +83,7 @@ const _update = function(req, res, update){
         return;
     }
 
-    response = createResponse(process.env.UPDATE_SUCCESS_STATUS_CODE);
+    response = createResponse(getEnv('UPDATE_SUCCESS_STATUS_CODE'));
     Artist.findById(artistId).select("songs")
         .then((artist) => checkObjectExistsInDB(artist, response))
         .then((artist) => _handleUpdate(req, artist, songId, response, update))
@@ -114,8 +114,8 @@ const _returnOneSong = function(artist, songId, response){
     if(selectedSong){
         response.message = selectedSong;
     } else {
-        response.status = process.env.FILE_NOT_FOUND_STATUS_CODE;
-        response.message = process.env.INVALID_SONG_MESSAGE + songId;
+        response.status = getEnv('FILE_NOT_FOUND_STATUS_CODE');
+        response.message = getEnv('INVALID_SONG_MESSAGE') + songId;
     }
 }
 
@@ -124,9 +124,9 @@ const getAll = function(req, res){
     const artistId = req.params.artistId;
 
     //get value from environment variable
-    let offset = getInt(process.env.DEFAULT_OFFSET);
-    let count = getInt(process.env.DEFAULT_COUNT);
-    let maxCount = getInt(process.env.MAX_COUNT);
+    let offset = getInt(getEnv('DEFAULT_OFFSET'));
+    let count = getInt(getEnv('DEFAULT_COUNT'));
+    let maxCount = getInt(getEnv('MAX_COUNT'));
 
     //check query string parameters
     if(req.query && req.query.offset){
@@ -138,25 +138,25 @@ const getAll = function(req, res){
 
     // type check of the variables to be used
     if(isNaN(offset) || isNaN(count)){
-        const response = createResponse(process.env.CLIENT_ERROR_STATUS_CODE, process.env.PARAMETER_TYPE_ERROR_MESSAGE);
+        const response = createResponse(getEnv('CLIENT_ERROR_STATUS_CODE'), getEnv('PARAMETER_TYPE_ERROR_MESSAGE'));
         sendResponse(res, response);
         return;
     }
 
     //limit check
     if(count > maxCount){
-        const response = createResponse(process.env.CLIENT_ERROR_STATUS_CODE, process.env.LIMIT_EXCEED_MESSAGE);
+        const response = createResponse(getEnv('CLIENT_ERROR_STATUS_CODE'), getEnv('LIMIT_EXCEED_MESSAGE'));
         sendResponse(res, response);
         return;
     }
-    console.log(req.params);
+
     //validate if provided artistId is valid document id
     let response = validateObjectId(artistId);
     if(response){
         sendResponse(res, response);
         return;
     }
-console.log(artistId);
+
     response = createResponse();
     Artist.findById(artistId).select("songs")
         .then((artist) => checkObjectExistsInDB(artist, response))
@@ -204,7 +204,7 @@ const addOne = function(req, res){
         return;
     }
 
-    response = createResponse(process.env.UPDATE_SUCCESS_STATUS_CODE);
+    response = createResponse(getEnv('UPDATE_SUCCESS_STATUS_CODE'));
     Artist.findById(artistId).select("songs")
         .then((artist) => checkObjectExistsInDB(artist, response))
         .then((artist) => _addSong(req, artist, response))
@@ -241,7 +241,7 @@ const deleteOne = function(req, res){
         return;
     }
 
-    response = createResponse(process.env.UPDATE_SUCCESS_STATUS_CODE);
+    response = createResponse(getEnv('UPDATE_SUCCESS_STATUS_CODE'));
     Artist.findById(artistId).select("songs")
         .then((artist) => checkObjectExistsInDB(artist, response))
         .then((artist) => _deleteSong(req, artist, response))

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { getEnv } = require('../utilities');
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -14,6 +15,7 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
+        select: false, //false -> hides this field in select query
         required: [
             true,
             'Please enter password!'
@@ -21,4 +23,4 @@ const userSchema = new mongoose.Schema({
     }
 });
 
-mongoose.model(process.env.USER_MODEL, userSchema, process.env.USERS_COLLECTION);
+mongoose.model(getEnv('USER_MODEL'), userSchema, getEnv('USERS_COLLECTION'));
