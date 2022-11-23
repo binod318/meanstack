@@ -89,8 +89,6 @@ export class ArtistsComponent implements OnInit {
   }
 
   toggleNextBtn(){
-    console.log(this.pageNumber , Math.ceil(this.total / this.pageSize));
-    
     if(this.pageNumber < Math.ceil(this.total / this.pageSize)){
       this.disableNext = false;
     } else {

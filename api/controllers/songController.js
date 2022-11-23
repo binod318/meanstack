@@ -223,7 +223,7 @@ const partialUpdate = function(req, res){
 }
     
 const deleteOne = function(req, res){
-    console.log("Delete song request received");
+    debugLog("Delete song request received");
     const artistId = req.params.artistId;
     const songId = req.params.songId;
 

@@ -15,3 +15,18 @@ mongodump --db  meanMusic --gzip
 
 # use this command to export json collection
 mongoexport --dd meanMusic --collection artists --out artists.json --jsonArray --pretty
+
+======================================================
+
+This package has two independent projects.
+1. express application (service)
+2. angular application (UI)
+
+nodemon package must be installed globally to run this package.
+
+Node modules must be installed separately from these two lcoations. 
+1. root level
+2. /public/angular-app/
+
+Use npm start from root level to run two projects together.
+UI is running on port 4200 and service is running on 3000
