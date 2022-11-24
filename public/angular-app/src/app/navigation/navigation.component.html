@@ -1,9 +1,9 @@
 <nav>
-    <button routerLink="/{{homeRoute}}">{{home_label}}</button>
-    <button routerLink="/{{artistsRoute}}">{{artists_label}}</button>
-    <button routerLink="/{{searchRoute}}">{{search_label}}</button>
-    <button routerLink="/{{registerRoute}}" *ngIf="!isLoggedIn">{{register_label}}</button>
-    <button routerLink="/{{profileRoute}}" *ngIf="isLoggedIn">{{profile_label}}</button>
+    <button routerLink="/{{homeRoute}}" class="btn btn-primary">{{home_label}}</button>
+    <button routerLink="/{{artistsRoute}}" class="btn btn-primary">{{artists_label}}</button>
+    <button routerLink="/{{searchRoute}}" class="btn btn-primary">{{search_label}}</button>
+    <button routerLink="/{{registerRoute}}" class="btn btn-primary" *ngIf="!isLoggedIn">{{register_label}}</button>
+    <button routerLink="/{{profileRoute}}" class="btn btn-primary" *ngIf="isLoggedIn">{{profile_label}}</button>
 
     <div class="login">
         <app-login></app-login>

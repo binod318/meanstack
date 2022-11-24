@@ -2,11 +2,11 @@
     <form #loginForm="ngForm" (ngSubmit)="login()">
             <input name="username" [(ngModel)]="user.username" placeholder="{{username_label | lowercase}}" required/>
             <input name="password" [(ngModel)]="user.password" placeholder="{{password_label | lowercase}}" required/>
-            <input type="submit" value="{{login_label}}"/>
+            <input type="submit" value="{{login_label}}" class="btn btn-primary"/>
     </form>
 </div>
 
 <div *ngIf="isLoggedIn">
     {{greeting_label}} {{username}} !
-    <button (click)="logout()">{{logout_label}}</button>
+    <button (click)="logout()" class="btn btn-primary">{{logout_label}}</button>
 </div>

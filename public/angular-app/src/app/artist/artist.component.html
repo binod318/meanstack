@@ -7,15 +7,15 @@
     <p>{{errorMessage}}</p>
 </div>
 
-{{bornYearLabel}}: {{artist.bornYear}} <br/>
-{{genderLabel}}: {{artist.gender}} <br/>
-{{nationLabel}}: {{artist.nation}} <br/>
-{{firstSongLabel}} {{artist.firstSong}} <br/>
+<app-updatable-control [label]="bornYearLabel" [(value)]="artist.bornYear" (actionEvent)="confirmEdit($event)"></app-updatable-control>
+<app-updatable-control [label]="genderLabel" [(value)]="artist.gender" (actionEvent)="confirmEdit($event)"></app-updatable-control>
+<app-updatable-control [label]="nationLabel" [(value)]="artist.nation" (actionEvent)="confirmEdit($event)"></app-updatable-control>
+<app-updatable-control [label]="firstSongLabel" [(value)]="artist.firstSong" (actionEvent)="confirmEdit($event)"></app-updatable-control>
 
 <br/>
-{{bandsLabel}}:
+<label class="property">{{bandsLabel}} :</label>
 <ul>
     <li *ngFor="let band of artist.bands">{{band}}</li>
 </ul>
 
-<button (click)="deleteArtist()" *ngIf="isLoggedIn">{{delete_label}}</button>
+<button (click)="deleteArtist()" *ngIf="isLoggedIn" class="btn btn-outline-success btn-sm">{{delete_label}}</button>

@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        select: false, //false -> hides this field in select query
+        select: true, //false -> hides this field in select query
         required: [
             true,
             'Please enter password!'

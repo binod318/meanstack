@@ -54,11 +54,11 @@ export class ArtistFormComponent implements OnInit {
     //if artistId is passed in params then this form should work as edit form
     if(this.artistId){
       this._artistsService.getArtist(this.artistId).subscribe(artist =>{
-        this.artist = new Artist(artist.artistName, artist.bornYear, artist.gender,artist.nation,artist.bands,artist.firstSong);
+        this.artist = new Artist(artist._id, artist.artistName, artist.bornYear, artist.gender,artist.nation,artist.bands,artist.firstSong);
         this.artistForm.setValue(this.artist.ToJson());
       })
     } else {
-      this.artist = new Artist("", "", "","","","");
+      this.artist = new Artist("", "", "", "","","","");
       this.artistForm.setValue(this.artist.ToJson());
     }
   }
@@ -67,6 +67,7 @@ export class ArtistFormComponent implements OnInit {
 
     if(this.artistForm.valid){
       const newArtist = new Artist(
+        "",
         this.artistForm.value.artistName,
         this.artistForm.value.bornYear,
         this.artistForm.value.nation,

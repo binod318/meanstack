@@ -22,6 +22,8 @@ export const environment = {
 
   add_label: "Add",
   update_label: "Update",
+  ok_label: "Ok",
+  cancel_label: "Cancel",
   next_label: "Next",
   previous_label: "Previous",
   edit_label: "Edit",

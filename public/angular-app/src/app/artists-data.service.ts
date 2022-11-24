@@ -37,6 +37,11 @@ export class ArtistsDataService {
     return this._http.put<void>(url, artist.ToJson());
   }
 
+  public partialUpdateArtist(artist: Artist): Observable<void>{
+    const url = UrlConfig.artistsUrl + artist._id;
+    return this._http.patch<void>(url, artist.ToJson());
+  }
+
   public deleteArtist(artistId: String): Observable<void>{
     const url = UrlConfig.artistsUrl + artistId;
     return this._http.delete<void>(url);

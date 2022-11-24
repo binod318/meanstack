@@ -4,21 +4,42 @@
     color: whitesmoke;
 }
 
+ul > li {
+    background-size: 10px;
+    list-style-image: url('../../assets/images/music.png');
+    margin: 5px 0;
+    border-bottom: 1px dashed wheat;
+}
+
 .artists {
-    margin: 10px;
+    position: relative;
+}
+
+a {
+    text-decoration: none;
+    color: white;
+}
+
+a:hover {
+    font-size: 1.2em;
+    color: skyblue;
 }
 
 .page-size, .total {
-    width: 50px;
+    width: 70px;
     height: 25px;
+    text-align: center;
 }
 
 .pagination {
     margin: 10px 0;
+    position: fixed;
+    bottom: 100px;
 }
 
 .pagination > label {
     margin: 0 10px;
+    line-height: 25px;
 }
 
 button {

@@ -19,6 +19,7 @@ import { LoginComponent } from './login/login.component';
 import { SearchComponent } from './search/search.component';
 import { httpInterceptorProviders } from './services/http-interceptors';
 import { ProfileComponent } from './profile/profile.component';
+import { UpdatableControlComponent } from './updatable-control/updatable-control.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import { ProfileComponent } from './profile/profile.component';
     ArtistFormComponent,
     LoginComponent,
     SearchComponent,
-    ProfileComponent
+    ProfileComponent,
+    UpdatableControlComponent
   ],
   imports: [
     BrowserModule,

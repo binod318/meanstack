@@ -12,7 +12,7 @@
         <input [(ngModel)]="minDistance" placeholder="{{minimum_label | lowercase}} {{distance_label | lowercase}} {{for_label}} {{geoSearch_label | lowercase}}" (keyup.enter)="onKeyEnter()"/>
         <label>{{maximum_label}} {{distance_label | lowercase}}:</label>
         <input [(ngModel)]="maxDistance" placeholder="{{maximum_label | lowercase}} {{distance_label | lowercase}} {{for_label}} {{geoSearch_label | lowercase}}" (keyup.enter)="onKeyEnter()"/>
-        <button (click)="onKeyEnter()">{{search_label}}</button>
+        <button (click)="onKeyEnter()" class="btn btn-info btn-sm">{{search_label}}</button>
     </div>
 
     <div>

@@ -1,9 +1,10 @@
 nav {
-    margin: 10px;
+    margin-bottom: 10px;
 }
 
 nav > button {
-    margin: 2px;
+    margin: 1px;
+    min-width: 120px;
 }
 
 .login {

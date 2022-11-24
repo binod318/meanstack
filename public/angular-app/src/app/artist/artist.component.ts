@@ -31,10 +31,14 @@ export class ArtistComponent implements OnInit {
   }
 
   constructor(private _artistsService:ArtistsDataService, private _route:ActivatedRoute, private _router:Router, private _authenticationService:AuthenticationService) { 
-    this.artist = new Artist("", "", "","","","");
+    this.artist = new Artist("", "", "", "","","","");
   }
 
   ngOnInit(): void {
+    this._fetchArtist();
+  }
+
+  _fetchArtist(): void {
     const artistId = this._route.snapshot.params[environment.artist_id];
     this._artistsService.getArtist(artistId).subscribe(artist => {
       this.artist = artist;
@@ -62,4 +66,45 @@ export class ArtistComponent implements OnInit {
     });
   }
 
+  confirmEdit(action: string){
+    console.log(this.artist.bornYear, action, this.artist);
+
+    if(action.split('|')[0] === 'cancel')
+      this._fetchArtist();
+    else {
+      const updatedArtist = new Artist(this.artist._id, "", "", "", "", "","");
+
+      //gets label from child component
+      switch(action.split('|')[1]){
+        case this.bornYearLabel:
+          updatedArtist.bornYear = this.artist.bornYear;
+          break;
+        case this.genderLabel:
+          updatedArtist.gender = this.artist.gender;
+          break;
+        case this.nationLabel:
+          updatedArtist.nation = this.artist.nation;
+          break;
+        case this.firstSongLabel:
+          updatedArtist.firstSong = this.artist.firstSong;
+          break;
+        // case this.bornYearLabel:
+        //   updatedArtist.bornYear = this.artist.bornYear;
+        //   break;
+        
+        default:
+          break;
+      }
+
+      this._updateArtist(updatedArtist);
+    }
+  }
+
+  _updateArtist(artist:Artist){
+    this._artistsService.partialUpdateArtist(artist).subscribe({
+      next: () => {},
+      error: () => {},
+      complete: () => {}
+    })
+  }
 }

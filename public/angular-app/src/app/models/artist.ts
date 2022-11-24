@@ -23,6 +23,7 @@ export class Artist {
     set firstSong(firstSong: string) { this.#firstSong = firstSong; }
   
     constructor(
+      id: string,
       artistName:string,
       bornYear:string,
       nation:string,
@@ -30,6 +31,7 @@ export class Artist {
       bands:string,
       firstSong:string
     ){
+        this.#_id = id;
         this.#artistName = artistName;
         this.#bornYear = bornYear;
         this.#nation = nation;
@@ -40,12 +42,12 @@ export class Artist {
   
     ToJson(){
       return {
-        artistName: this.#artistName,
-        bornYear: this.#bornYear,
-        nation: this.#nation,
-        gender: this.#gender,
-        bands: this.#bands,
-        firstSong: this.#firstSong
+        artistName: this.#artistName ? this.#artistName : null,
+        bornYear: this.#bornYear ? this.#bornYear : null,
+        nation: this.#nation ? this.#nation : null,
+        gender: this.#gender ? this.#gender : null,
+        bands: this.#bands ? this.#bands : null,
+        firstSong: this.#firstSong ? this.#firstSong : null
       }
     }
   }

@@ -31,7 +31,7 @@
         <input name="bands" ngModel/>
     </div>
     <div>
-        <input type="submit" value="{{addButtonText}}" *ngIf="!this.artistId"/>
-        <input type="submit" value="{{updateButtonText}}" *ngIf="this.artistId"/>
+        <input type="submit" value="{{addButtonText}}" *ngIf="!this.artistId" class="btn btn-success btn-sm"/>
+        <input type="submit" value="{{updateButtonText}}" *ngIf="this.artistId" class="btn btn-success btn-sm"/>
     </div>
 </form>

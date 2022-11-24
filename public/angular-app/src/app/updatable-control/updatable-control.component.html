@@ -1,0 +1,8 @@
+<div>
+    <label class="property">{{label}} : </label> 
+    <label *ngIf="!isUpdatable">{{value}} </label> 
+    <input *ngIf="isUpdatable" [(ngModel)]="value">
+    <img *ngIf="!isUpdatable" (click)="edit()" src="../../assets/images/edit-16.png" alt="{{edit_label}}" height="12px">
+    <img *ngIf="isUpdatable" (click)="confirm('cancel')" src="../../assets/images/cancel-16.png" alt="{{cancel_label}}" height="12px">
+    <img *ngIf="isUpdatable" (click)="confirm('commit')" src="../../assets/images/ok-16.png" alt="ok_label" height="12px">
+</div>
