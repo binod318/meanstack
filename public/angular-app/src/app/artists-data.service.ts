@@ -4,6 +4,7 @@ import { Observable } from 'rxjs/internal/Observable';
 import { UrlConfig } from 'src/config/url-config';
 import { Artist } from './models/artist';
 import { Filter } from './models/filter';
+import { Song } from './models/song';
 
 @Injectable({
   providedIn: 'root'
@@ -45,5 +46,26 @@ export class ArtistsDataService {
   public deleteArtist(artistId: String): Observable<void>{
     const url = UrlConfig.artistsUrl + artistId;
     return this._http.delete<void>(url);
+  }
+
+  //songs
+  public getSongs(artistId:string): Observable<Song[]>{
+    const url = UrlConfig.artistsUrl + artistId + UrlConfig.songSubUrl;
+    return this._http.get<Song[]>(url);
+  }
+
+  public getSong(artistId:string, songId:string): Observable<Song>{
+    const url = UrlConfig.artistsUrl + artistId + UrlConfig.songSubUrl + songId;
+    return this._http.get<Song>(url);
+  }
+
+  public addSong(artistId:string, song:Song): Observable<Song>{
+    const url = UrlConfig.artistsUrl + artistId + UrlConfig.songSubUrl;
+    return this._http.post<Song>(url, song.ToJson());
+  }
+
+  public updateSong(artistId:string, song:Song): Observable<Song>{
+    const url = UrlConfig.artistsUrl + artistId + UrlConfig.songSubUrl + song._id;
+    return this._http.put<Song>(url, song.ToJson());
   }
 }

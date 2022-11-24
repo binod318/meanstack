@@ -18,7 +18,8 @@ const _fullUpdate = function(req, artist){
     artist.gender       = req.body.gender
     artist.bands        = req.body.bands
     artist.firstSong    = req.body.firstSong;
-    artist.songs        = [];
+    artist.coordinates  = req.body.coordinates; 
+    //artist.songs        = [];
 }
 
 const _partialUpdate = function(req, artist){
@@ -38,6 +39,8 @@ const _partialUpdate = function(req, artist){
         artist.bands        = req.body.bands
     if (req.body.firstSong) 
         artist.firstSong    = req.body.firstSong; 
+    if (req.body.coordinates) 
+        artist.coordinates    = req.body.coordinates; 
 }
 
 const _updateToDB = function(req, artist, response, update){
@@ -101,7 +104,7 @@ const _runGeoSearchQuery = function(req, res, offset, count){
     let query = {};
     if(req.query && req.query.search){
         query = {artistName: RegExp(req.query.search),
-                "address.coordinates": {
+                "coordinates": {
                     $near: {
                         $geometry: point,
                         $maxDistance: maxDistance,
@@ -110,7 +113,7 @@ const _runGeoSearchQuery = function(req, res, offset, count){
         }}
     } else {
         //please check if this field is in index
-        query = {"address.coordinates": {
+        query = {"coordinates": {
             $near: {
                 $geometry: point,
                 $maxDistance: maxDistance,

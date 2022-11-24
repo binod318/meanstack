@@ -11,11 +11,22 @@
 <app-updatable-control [label]="genderLabel" [(value)]="artist.gender" (actionEvent)="confirmEdit($event)"></app-updatable-control>
 <app-updatable-control [label]="nationLabel" [(value)]="artist.nation" (actionEvent)="confirmEdit($event)"></app-updatable-control>
 <app-updatable-control [label]="firstSongLabel" [(value)]="artist.firstSong" (actionEvent)="confirmEdit($event)"></app-updatable-control>
+<app-updatable-control [label]="location_label" [(value)]="coordinates" (actionEvent)="confirmEdit($event)" [placeholder]="loc_placeholder_label"></app-updatable-control>
 
 <br/>
-<label class="property">{{bandsLabel}} :</label>
+<label>{{bandsLabel}} :</label>
 <ul>
     <li *ngFor="let band of artist.bands">{{band}}</li>
+</ul>
+
+<label>{{songs_label}} :</label>
+<img routerLink="/{{artistPath}}/{{artist._id}}/{{addSongPath}}" src="../../assets/images/plus-16.png" alt="add_label" height="16px" *ngIf="isLoggedIn">
+<ul>
+    <li *ngFor="let song of artist.songs">
+        <a routerLink="/{{artistPath}}/{{artist._id}}/{{editSongPath}}/{{song._id}}">
+            {{song.title}}
+        </a>
+    </li>
 </ul>
 
 <button (click)="deleteArtist()" *ngIf="isLoggedIn" class="btn btn-outline-success btn-sm">{{delete_label}}</button>

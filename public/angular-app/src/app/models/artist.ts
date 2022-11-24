@@ -1,3 +1,5 @@
+import { Song } from "./song";
+
 export class Artist {
     #_id!:string;
     #artistName!:string;
@@ -6,6 +8,8 @@ export class Artist {
     #gender!:string;
     #bands!:string;
     #firstSong!:string;
+    #coordinates!:number[];
+    songs!:Song[];
   
     get _id() { return this.#_id; }
     set _id(_id: string) { this.#_id = _id; }
@@ -21,6 +25,8 @@ export class Artist {
     set bands(bands: string) { this.#bands = bands; }
     get firstSong() { return this.#firstSong; }
     set firstSong(firstSong: string) { this.#firstSong = firstSong; }
+    get coordinates() { return this.#coordinates; }
+    set coordinates(coordinates: number[]) { this.#coordinates = coordinates; }
   
     constructor(
       id: string,
@@ -29,7 +35,8 @@ export class Artist {
       nation:string,
       gender:string,
       bands:string,
-      firstSong:string
+      firstSong:string,
+      coordinates:number[]
     ){
         this.#_id = id;
         this.#artistName = artistName;
@@ -38,6 +45,7 @@ export class Artist {
         this.#gender = gender;
         this.#bands = bands;
         this.#firstSong = firstSong;
+        this.#coordinates = coordinates;
     }
   
     ToJson(){
@@ -47,7 +55,8 @@ export class Artist {
         nation: this.#nation ? this.#nation : null,
         gender: this.#gender ? this.#gender : null,
         bands: this.#bands ? this.#bands : null,
-        firstSong: this.#firstSong ? this.#firstSong : null
+        firstSong: this.#firstSong ? this.#firstSong : null,
+        coordinates: this.#coordinates ? this.#coordinates : null
       }
     }
   }

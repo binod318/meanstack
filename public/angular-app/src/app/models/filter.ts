@@ -22,8 +22,8 @@ export class Filter {
       query = this.#count ? (query ? `${query}&` : '') + `count=${this.#count}` : query; 
   
       query = this.#search ? (query ? `${query}&` : '') + `search=${this.#search}` : query; 
-      query = this.#latitude ? (query ? `${query}&` : '') + `latitude=${this.#latitude}` : query; 
-      query = this.#longitude ? (query ? `${query}&` : '') + `longitude=${this.#longitude}` : query; 
+      query = this.#latitude ? (query ? `${query}&` : '') + `lat=${this.#latitude}` : query; 
+      query = this.#longitude ? (query ? `${query}&` : '') + `lng=${this.#longitude}` : query; 
       query = this.#minDist ? (query ? `${query}&` : '') + `minDist=${this.#minDist}` : query; 
       query = this.#maxDist ? (query ? `${query}&` : '') + `maxDist=${this.#maxDist}` : query; 
   

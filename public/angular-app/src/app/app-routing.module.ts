@@ -10,6 +10,7 @@ import { LoginComponent } from './login/login.component';
 import { ProfileComponent } from './profile/profile.component';
 import { RegisterComponent } from './register/register.component';
 import { SearchComponent } from './search/search.component';
+import { SongComponent } from './song/song.component';
 
 const routes: Routes = [
   {
@@ -43,6 +44,14 @@ const routes: Routes = [
   {
     path: RoutesConfig.editArtistPath,
     component: ArtistFormComponent
+  },
+  {
+    path: RoutesConfig.addSongRoute,
+    component: SongComponent
+  },
+  {
+    path: RoutesConfig.editSongRoute,
+    component: SongComponent
   },
   {
     path: RoutesConfig.loginRoute,

@@ -33,6 +33,7 @@ export class ArtistFormComponent implements OnInit {
   bornYearLabel:string = environment.bornYear_label;
   genderLabel:string = environment.gender_label;
   nationLabel:string = environment.nation_label;
+  location_label:string = environment.location_label;
   firstSongLabel:string = environment.firstSong_label;
   bandsLabel:string = environment.bands_label;
 
@@ -54,11 +55,11 @@ export class ArtistFormComponent implements OnInit {
     //if artistId is passed in params then this form should work as edit form
     if(this.artistId){
       this._artistsService.getArtist(this.artistId).subscribe(artist =>{
-        this.artist = new Artist(artist._id, artist.artistName, artist.bornYear, artist.gender,artist.nation,artist.bands,artist.firstSong);
+        this.artist = new Artist(artist._id, artist.artistName, artist.bornYear, artist.gender,artist.nation,artist.bands,artist.firstSong, artist.coordinates);
         this.artistForm.setValue(this.artist.ToJson());
       })
     } else {
-      this.artist = new Artist("", "", "", "","","","");
+      this.artist = new Artist("", "", "", "","","","",[]);
       this.artistForm.setValue(this.artist.ToJson());
     }
   }
@@ -72,10 +73,14 @@ export class ArtistFormComponent implements OnInit {
         this.artistForm.value.bornYear,
         this.artistForm.value.nation,
         this.artistForm.value.gender,
-        this.artistForm.value.bands,
-        this.artistForm.value.firstSong
+        this.artistForm.value.bands.toString().split(','),
+        this.artistForm.value.firstSong,
+        this.artistForm.value.coordinates
       );
-  
+
+      const arr = this.artistForm.value.coordinates.toString().split(',');
+      newArtist.coordinates = arr.map((e:string) => parseFloat(e));
+
       //update
       if(this.artistId){
         newArtist._id = this.artistId;    

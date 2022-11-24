@@ -1,7 +1,10 @@
 
 <div class="artists">
-    <h3>{{artists_label}} {{list_label}}</h3> 
-    <button class="btn btn-info btn-sm" routerLink="/{{addArtistRoute}}">{{addButtonText}} {{artist_label | lowercase}}</button>
+    <div class="title">
+        <label>{{artists_label}} {{list_label}}</label> 
+        <img routerLink="/{{addArtistRoute}}" src="../../assets/images/plus-32.png" alt="add_label" height="28px" *ngIf="isLoggedIn">
+    </div>
+    <!-- <button class="btn btn-info btn-sm" routerLink="/{{addArtistRoute}}">{{addButtonText}} {{artist_label | lowercase}}</button> -->
 
     <div>
         {{display_total_label}}
@@ -16,14 +19,6 @@
         <li *ngFor="let artist of artists">
             <a routerLink="/{{artistDetailRoute}}{{artist._id}}">
                 {{artist.artistName}}
-            </a>
-
-            <a class="space-added" routerLink="/{{editArtistRoute}}{{artist._id}}">
-                {{edit_label | lowercase}}
-            </a>
-
-            <a class="space-added" (click)="onDelete(artist._id)">
-                {{delete_label | lowercase}}
             </a>
         </li>
     </ul>

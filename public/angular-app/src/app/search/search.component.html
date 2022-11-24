@@ -21,14 +21,6 @@
                 <a routerLink="/{{artistDetailRoute}}{{artist._id}}">
                     {{artist.artistName}}
                 </a>
-    
-                <a class="space-added" routerLink="/{{editArtistRoute}}{{artist._id}}">
-                    {{edit_label}}
-                </a>
-    
-                <a class="space-added" (click)="onDelete(artist._id)">
-                    {{delete_label}}
-                </a>
             </li>
         </ul>
     </div>

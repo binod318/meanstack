@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { RoutesConfig } from 'src/config/routes-config';
 import { environment } from 'src/environments/environment';
 import { ArtistsDataService } from '../artists-data.service';
+import { AuthenticationService } from '../authentication.service';
 import { Artist } from '../models/artist';
 import { Filter } from '../models/filter';
 
@@ -37,7 +38,11 @@ export class ArtistsComponent implements OnInit {
   delete_label:string = environment.delete_label;
   list_label:string = environment.list_label;
 
-  constructor(private _artistsService:ArtistsDataService) { }
+  get isLoggedIn(): boolean {
+    return this._authenticationService.isLoggedIn;
+  }
+
+  constructor(private _artistsService:ArtistsDataService, private _authenticationService:AuthenticationService) { }
 
   ngOnInit(): void {
     this._fetchTotalCount();
@@ -54,6 +59,7 @@ export class ArtistsComponent implements OnInit {
   _fetchTotalCount(){
     this._artistsService.getTotalCount().subscribe(total => {
       this.total = total;
+      this.toggleNextBtn();
 
       //create pageSize
       for(let i = 1; i <= Math.ceil(total / this.pageSize); i++){

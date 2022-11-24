@@ -1,0 +1,33 @@
+<div *ngIf="hasSuccess" class="alert alert-success">
+    <p>{{successMessage}}</p>
+</div>
+<div *ngIf="hasError" class="alert alert-danger">
+    <p>{{errorMessage}}</p>
+</div>
+
+<form #songForm="ngForm" (ngSubmit)="onSubmit()">
+    <div>
+        <label>{{titleLabel}} :</label>
+        <input name="title" ngModel required *ngIf="isLoggedIn"/>
+        <label *ngIf="!isLoggedIn">{{song && song.title}}</label>
+    </div>
+    <div>
+        <label>{{rankLabel}} :</label>
+        <input name="rank" ngModel required  *ngIf="isLoggedIn"/>
+        <label *ngIf="!isLoggedIn">{{song && song.rank}}</label>
+    </div>
+    <div>
+        <label>{{yearLabel}} :</label>
+        <input name="year" ngModel required  *ngIf="isLoggedIn"/>
+        <label *ngIf="!isLoggedIn">{{song && song.year}}</label>
+    </div>
+    <div>
+        <label>{{albumLabel}} :</label>
+        <input name="album" ngModel required  *ngIf="isLoggedIn"/>
+        <label *ngIf="!isLoggedIn">{{song && song.album}}</label>
+    </div>
+    <div *ngIf="isLoggedIn">
+        <input type="submit" value="{{addButtonText}}" *ngIf="!this.songId " class="btn btn-success btn-sm"/>
+        <input type="submit" value="{{updateButtonText}}" *ngIf="this.songId" class="btn btn-success btn-sm"/>
+    </div>
+</form>

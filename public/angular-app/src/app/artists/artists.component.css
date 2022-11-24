@@ -4,11 +4,27 @@
     color: whitesmoke;
 }
 
+.title {
+    display: flex;
+    align-items: flex-end;
+    margin-bottom: 10px;
+}
+
+.title>label {
+    font-size: 28px;
+}
+
+img {
+    margin: 10px;
+    margin-bottom: 5px;
+    padding-top: -5px;
+}
+
 ul > li {
     background-size: 10px;
     list-style-image: url('../../assets/images/music.png');
     margin: 5px 0;
-    border-bottom: 1px dashed wheat;
+    /* border-bottom: 1px dashed wheat; */
 }
 
 .artists {
@@ -21,7 +37,8 @@ a {
 }
 
 a:hover {
-    font-size: 1.2em;
+    text-shadow: 2px;
+    font-weight: bold;
     color: skyblue;
 }
 

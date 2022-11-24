@@ -164,32 +164,6 @@ const deleteOne = function(req, res) {
         .finally(() => sendResponse(res, response));
 };
 
-const loginSync = function(req, res){
-    debugLog('Login request received');
-    const username = req.body.username;
-    const password = req.body.password;
-
-    const user = {username: username};
-    let response = createResponse();
-    User.findOne(user).exec()
-        .then(user => {
-            if(!user){
-                response = createResponse(getEnv('FILE_NOT_FOUND_STATUS_CODE'), getEnv('INVALID_CREDENTIAL_MESSAGE'));
-                sendResponse(res, response);
-            } else {
-                //compare
-                const passwordMatch = bcrypt.compareSync(password, user.password);
-                if(passwordMatch){
-                    response.message= user;
-                } else {
-                    response = createResponse(getEnv('FILE_NOT_FOUND_STATUS_CODE'), getEnv('INVLAID_CREDENTIAL_MESSAGE'));
-                }
-            }
-        })
-        .catch(error => response = createErrorResponse(error))
-        .finally(() => sendResponse(res, response));
-}
-
 const _checkPassword = function(password, user, response){
     debugLog('check password!')
     return new Promise((resolve, reject) => {
@@ -216,6 +190,22 @@ const _generateToken = function(user, response){
     response.message = { success: true, token: token };
 }
 
+const _checkUserExists = function(entity, response){
+    debugLog('check db object!')
+    //to chain a promise you need to return promise
+    return new Promise((resolve, reject) => {
+        if(!entity){
+            debugLog("DB object doesn't exists");
+            response.status = getEnv('FILE_NOT_FOUND_STATUS_CODE'); 
+            response.message = getEnv('INVALID_CREDENTIAL_MESSAGE');
+            reject();
+        } else {
+            response.message = entity;
+            resolve(entity);
+        }
+    })
+}
+
 const login = function(req, res){
     debugLog('Login request received');
     const username = req.body.username;
@@ -225,7 +215,7 @@ const login = function(req, res){
 
     let response = createResponse();
     User.findOne(user).exec()
-        .then((user) => checkObjectExistsInDB(user, response))
+        .then((user) => _checkUserExists(user, response))
         .then((user) => _checkPassword(password, user, response))
         .then((user) => _generateToken(user, response))
         .catch((error) => handleError(error, response))

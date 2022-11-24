@@ -20,6 +20,7 @@ import { SearchComponent } from './search/search.component';
 import { httpInterceptorProviders } from './services/http-interceptors';
 import { ProfileComponent } from './profile/profile.component';
 import { UpdatableControlComponent } from './updatable-control/updatable-control.component';
+import { SongComponent } from './song/song.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { UpdatableControlComponent } from './updatable-control/updatable-control
     LoginComponent,
     SearchComponent,
     ProfileComponent,
-    UpdatableControlComponent
+    UpdatableControlComponent,
+    SongComponent
   ],
   imports: [
     BrowserModule,

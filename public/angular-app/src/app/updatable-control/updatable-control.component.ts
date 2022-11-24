@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { environment } from 'src/environments/environment';
+import { AuthenticationService } from '../authentication.service';
 
 @Component({
   selector: 'app-updatable-control',
@@ -12,6 +13,9 @@ export class UpdatableControlComponent implements OnInit {
 
   @Input()
   label!: string;
+
+  @Input()
+  placeholder!: string;
 
   @Input()
   value!: string;
@@ -32,7 +36,11 @@ export class UpdatableControlComponent implements OnInit {
   cancel_label: string = environment.cancel_label;
   ok_label: string = environment.ok_label;
 
-  constructor() { }
+  get isLoggedIn(): boolean {
+    return this._authenticationService.isLoggedIn;
+  }
+
+  constructor(private _authenticationService:AuthenticationService) { }
 
   ngOnInit(): void {
   }

@@ -7,6 +7,7 @@ export const environment = {
   artists_service_base_url: "BASE url for artists service",
   app_title: "angular-ui",
   artist_id: "this is a query param variable name for artistId",
+  song_id: "this is a query param variable name for songId",
   auth_header: "Header key for token",
   token_key: "key name in the localstorage of the browser",
   defaultPageSize: 0, //"this is the default size of the pageSize",
@@ -43,6 +44,8 @@ export const environment = {
   nation_label: "Nation",
   firstSong_label: "First song",
   bands_label: "Bands",
+  location_label: "Location",
+  songs_label: "Songs",
 
   page_label: "Page",
   artist_label: "artist",
@@ -52,6 +55,11 @@ export const environment = {
   of_label: "of",
 
   list_label: "list",
+
+  title_abel: "Title",
+  rank_abel: "Rank",
+  year_label: "Year",
+  album_label: "Album",
 
   search_label: "Search",
   latitude_label: "Latitude",
@@ -67,10 +75,16 @@ export const environment = {
   artist_add_fail_message: "This message will be displayed when there is error while adding artist",
   artist_update_success_message: "This message will be displayed when an artist is updated successfully",
   artist_update_fail_message: "This message will be displayed when there is an error updating the artist",
+  song_add_success_message: "This message will be displayed when a song is added successfully",
+  song_add_fail_message: "This message will be displayed when there is error while adding song",
+  song_update_success_message: "This message will be displayed when a song is updated successfully",
+  song_update_fail_message: "This message will be displayed when there is an error updating the song",
   artist_delete_success_message: "This message will be displayed when an artist is deleted successfully",
   artist_delete_fail_message: "This message will be displayed when there is error while deleting artist",
   user_register_success_message: "This message will be displayed when an user is registered successfully",
   user_register_fail_message: "This message will be displayed when there is error while registering user",
+
+  confirm_delete_message: "Confirm message for delete"
 };
 
 /*
