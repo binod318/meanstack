@@ -20,6 +20,7 @@
             <a routerLink="/{{artistDetailRoute}}{{artist._id}}">
                 {{artist.artistName}}
             </a>
+            <img routerLink="/{{editArtistRoute}}/{{artist._id}}" src="../../assets/images/edit-16.png" alt="edit_label" height="14px" *ngIf="isLoggedIn">
         </li>
     </ul>
 

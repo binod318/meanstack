@@ -12,7 +12,7 @@ router.route("/totalcount")
    .get(artistController.getTotalCount);
 
 router.route("/:artistId")
-   .get(authenticationController.authenticate, artistController.getOne)
+   .get(artistController.getOne)
    .put(authenticationController.authenticate, artistController.fullUpdate)
    .patch(authenticationController.authenticate, artistController.partialUpdate)
    .delete(authenticationController.authenticate, artistController.deleteOne);
