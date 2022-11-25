@@ -4,6 +4,13 @@ Developed on MacOS
 
 This project uses mongodb as a database. There is json for a collection of artists. This json should be imported to database named meanMusic. 
 
+dbname: 
+-meanMusic
+
+collections:
+-artists
+-users
+
 # use this command to import given json
 mongoimport --db meanMusic --collection artists --jsonArray artists.json
 
